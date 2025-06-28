@@ -1,11 +1,36 @@
--- Załaduj moduł Spawner
-local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Tworzymy GUI z przyciskiem
+local function showStatus(text)
+    local screenGui = playerGui:FindFirstChild("StatusGui")
+    if not screenGui then
+        screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "StatusGui"
+        screenGui.Parent = playerGui
+        local label = Instance.new("TextLabel")
+        label.Name = "Label"
+        label.Size = UDim2.new(1,0,0,50)
+        label.Position = UDim2.new(0,0,0,0)
+        label.BackgroundColor3 = Color3.new(0,0,0)
+        label.TextColor3 = Color3.new(1,1,1)
+        label.TextScaled = true
+        label.Parent = screenGui
+    end
+    screenGui.Label.Text = text
+end
+
+local success, Spawner = pcall(function()
+    return loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+end)
+
+if success and Spawner then
+    showStatus("Spawner loaded successfully")
+else
+    showStatus("Failed to load Spawner")
+    return
+end
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "SpawnerButtonGui"
 screenGui.Parent = playerGui
@@ -21,9 +46,12 @@ button.Text = "Spawn Raccoon Pet"
 button.Parent = screenGui
 
 button.MouseButton1Click:Connect(function()
-    -- Wywołujemy metodę spawn pet z modułu Spawner
-    Spawner.SpawnPet("Raccoon", 1, 2)
+    local ok, err = pcall(function()
+        Spawner.SpawnPet("Raccoon", 1, 2)
+    end)
+    if ok then
+        showStatus("SpawnPet executed")
+    else
+        showStatus("Error: "..tostring(err))
+    end
 end)
-
--- Możesz też załadować UI Spawner, jeśli chcesz
--- Spawner.Load()
