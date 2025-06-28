@@ -1,122 +1,29 @@
+-- Załaduj moduł Spawner
+local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local RACCOON_MODEL_ID = 135221246355942
-local hasRaccoon = false
+-- Tworzymy GUI z przyciskiem
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SpawnerButtonGui"
+screenGui.Parent = playerGui
 
-local function showStatus(text)
-    local screenGui = playerGui:FindFirstChild("RaccoonStatusGui")
-    if not screenGui then
-        screenGui = Instance.new("ScreenGui")
-        screenGui.Name = "RaccoonStatusGui"
-        screenGui.ResetOnSpawn = false
-        screenGui.Parent = playerGui
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 200, 0, 50)
+button.Position = UDim2.new(0.5, -100, 0.5, -25)
+button.BackgroundColor3 = Color3.fromRGB(45, 120, 225)
+button.TextColor3 = Color3.new(1, 1, 1)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 24
+button.Text = "Spawn Raccoon Pet"
+button.Parent = screenGui
 
-        local statusLabel = Instance.new("TextLabel")
-        statusLabel.Name = "StatusLabel"
-        statusLabel.Size = UDim2.new(1, 0, 0, 30)
-        statusLabel.Position = UDim2.new(0, 0, 1, -40)
-        statusLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        statusLabel.BackgroundTransparency = 0.5
-        statusLabel.TextColor3 = Color3.new(1, 1, 1)
-        statusLabel.Font = Enum.Font.SourceSansBold
-        statusLabel.TextSize = 22
-        statusLabel.Parent = screenGui
-    end
-    screenGui.StatusLabel.Text = text
-end
+button.MouseButton1Click:Connect(function()
+    -- Wywołujemy metodę spawn pet z modułu Spawner
+    Spawner.SpawnPet("Raccoon", 1, 2)
+end)
 
-local function loadModel()
-    local success, assets = pcall(function()
-        return game:GetObjects("rbxassetid://" .. RACCOON_MODEL_ID)
-    end)
-    if not success or not assets or #assets == 0 then
-        return nil
-    end
-    return assets[1]
-end
-
-local function createButton()
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "RaccoonButtonGui"
-    screenGui.ResetOnSpawn = false
-    screenGui.Parent = playerGui
-
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(0, 200, 0, 50)
-    button.Position = UDim2.new(0.5, -100, 0.5, -25)
-    button.BackgroundColor3 = Color3.fromRGB(45, 120, 225)
-    button.TextColor3 = Color3.new(1, 1, 1)
-    button.Font = Enum.Font.SourceSansBold
-    button.TextSize = 24
-    button.Text = "Spawn Raccoon"
-    button.Parent = screenGui
-
-    button.MouseButton1Click:Connect(function()
-        if hasRaccoon then
-            showStatus("You already have a Raccoon!")
-            return
-        end
-
-        local model = loadModel()
-        if not model then
-            showStatus("Failed to load Raccoon model.")
-            return
-        end
-
-        local specialMesh = model:FindFirstChildWhichIsA("SpecialMesh", true)
-        if not specialMesh then
-            model:Destroy()
-            showStatus("No SpecialMesh found in model.")
-            return
-        end
-
-        -- Tworzymy Handle, nieprzezroczysty, malutki
-        local handle = Instance.new("Part")
-        handle.Name = "Handle"
-        handle.Size = Vector3.new(0.5, 0.5, 0.5)
-        handle.Transparency = 0 -- widoczny fizycznie
-        handle.CanCollide = false
-        handle.Anchored = false
-        handle.Parent = model
-
-        -- Przenosimy SpecialMesh do Handle i ustawiamy skale, jeśli trzeba
-        specialMesh.Parent = handle
-        specialMesh.Scale = Vector3.new(2, 2, 2) -- powiększ według potrzeb
-
-        -- Ustawiamy CFrame handle i modelu na zero
-        handle.CFrame = CFrame.new(0, 0, 0)
-        if model.PrimaryPart then
-            model:SetPrimaryPartCFrame(handle.CFrame)
-        else
-            for _, part in pairs(model:GetChildren()) do
-                if part:IsA("BasePart") then
-                    part.CFrame = handle.CFrame
-                end
-            end
-        end
-
-        -- Tworzymy Tool i ustawiamy Grip
-        local tool = Instance.new("Tool")
-        tool.Name = "Raccoon"
-        tool.RequiresHandle = true
-        tool.CanBeDropped = false
-
-        tool.GripPos = Vector3.new(0, 0, 0)  -- możesz eksperymentować np. (0, -1, 0)
-        tool.GripForward = Vector3.new(0, 0, -1)
-        tool.GripRight = Vector3.new(1, 0, 0)
-        tool.GripUp = Vector3.new(0, 1, 0)
-
-        handle.Parent = tool
-        tool.Parent = player.Backpack
-
-        hasRaccoon = true
-        showStatus("Raccoon spawned! Take it in your hand to see it.")
-
-        model:Destroy()
-    end)
-end
-
-createButton()
-showStatus("Press the button to spawn your Raccoon pet.")
+-- Możesz też załadować UI Spawner, jeśli chcesz
+-- Spawner.Load()
