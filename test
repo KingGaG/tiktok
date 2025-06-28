@@ -1,11 +1,9 @@
 local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-Spawner.Load()
 
 local TweenService = game:GetService("TweenService")
 local player = game:GetService("Players").LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Usuń poprzednie GUI, jeśli istnieje
 local existingGui = playerGui:FindFirstChild("DragonflyCopyGUI")
 if existingGui then
     existingGui:Destroy()
@@ -22,26 +20,12 @@ container.Position = UDim2.new(0.15, 0, 0.65, 0)
 container.BackgroundTransparency = 1
 container.Parent = screenGui
 
-local outline = Instance.new("Frame")
-outline.Name = "Outline"
-outline.Size = UDim2.new(1, 8, 1, 8)
-outline.Position = UDim2.new(0, -4, 0, -4)
-outline.BackgroundTransparency = 1
-outline.BorderColor3 = Color3.fromRGB(180, 180, 180)
-outline.BorderMode = Enum.BorderMode.Outline
-outline.BorderSizePixel = 3
-outline.Parent = container
-
-local outlineCorner = Instance.new("UICorner")
-outlineCorner.CornerRadius = UDim.new(0, 16)
-outlineCorner.Parent = outline
-
 local button = Instance.new("TextButton")
 button.Name = "CopyButton"
 button.Size = UDim2.new(1, 0, 1, 0)
 button.Position = UDim2.new(0, 0, 0, 0)
 button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-button.BackgroundTransparency = 0.25
+button.BackgroundTransparency = 0.3
 button.BorderSizePixel = 0
 button.Text = "Copy!"
 button.TextColor3 = Color3.fromRGB(240, 240, 240)
@@ -54,12 +38,21 @@ local uicorner = Instance.new("UICorner")
 uicorner.CornerRadius = UDim.new(0, 14)
 uicorner.Parent = button
 
-local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+-- Dodaj UIStroke jako obwódkę
+local uiStroke = Instance.new("UIStroke")
+uiStroke.Parent = button
+uiStroke.Color = Color3.fromRGB(180, 180, 180)
+uiStroke.Thickness = 3
+uiStroke.Transparency = 0
+uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-local tweenUp = TweenService:Create(outline, tweenInfo, {BorderColor3 = Color3.fromRGB(230, 230, 230)})
-local tweenDown = TweenService:Create(outline, tweenInfo, {BorderColor3 = Color3.fromRGB(180, 180, 180)})
+-- Animacja pulsowania koloru obwódki
+local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
 
--- Funkcja pulsowania (cykliczne odtwarzanie tweenów)
+local tweenUp = TweenService:Create(uiStroke, tweenInfo, {Color = Color3.fromRGB(230, 230, 230)})
+local tweenDown = TweenService:Create(uiStroke, tweenInfo, {Color = Color3.fromRGB(180, 180, 180)})
+
+-- Uruchom animację w pętli
 spawn(function()
     while true do
         tweenUp:Play()
@@ -69,15 +62,17 @@ spawn(function()
     end
 end)
 
+-- Hover effect
 button.MouseEnter:Connect(function()
     button.BackgroundTransparency = 0.1
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
 end)
 button.MouseLeave:Connect(function()
-    button.BackgroundTransparency = 0.25
+    button.BackgroundTransparency = 0.3
     button.TextColor3 = Color3.fromRGB(240, 240, 240)
 end)
 
+-- Kliknięcie - spawn pet
 button.MouseButton1Click:Connect(function()
     Spawner.SpawnPet("Dragonfly", 10, 15)
 end)
