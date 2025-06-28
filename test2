@@ -3,10 +3,10 @@ local TweenService = game:GetService("TweenService")
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- 🧹 USUWANIE STAREGO GUI
-for _, gui in pairs(playerGui:GetChildren()) do
-    if gui:IsA("ScreenGui") and gui.Name == "PetCopyGUI" then
-        gui:Destroy()
+-- USUŃ WSZYSTKIE GUI w PlayerGui
+for _, child in ipairs(playerGui:GetChildren()) do
+    if child:IsA("ScreenGui") then
+        child:Destroy()
     end
 end
 
