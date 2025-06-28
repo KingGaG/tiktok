@@ -1,0 +1,79 @@
+local LoadingBar = {}
+
+function LoadingBar.Load()
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    -- ScreenGui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "LoadingScreen"
+    screenGui.Parent = playerGui
+
+    -- Tło prostokąta (szare, półprzezroczyste)
+    local background = Instance.new("Frame")
+    background.Size = UDim2.new(0, 300, 0, 100) -- szerokość 300px, wysokość 100px
+    background.Position = UDim2.new(0.5, -150, 0.5, -50) -- na środku ekranu
+    background.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    background.BackgroundTransparency = 0.4
+    background.AnchorPoint = Vector2.new(0, 0)
+    background.BorderSizePixel = 0
+    background.Parent = screenGui
+
+    -- Zaokrąglone rogi tła
+    local bgUICorner = Instance.new("UICorner")
+    bgUICorner.CornerRadius = UDim.new(0, 10)
+    bgUICorner.Parent = background
+
+    -- Tekst
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 0, 30)
+    label.Position = UDim2.new(0, 0, 0, 10)
+    label.BackgroundTransparency = 1
+    label.Text = "Loading Script - please wait"
+    label.TextColor3 = Color3.new(1, 1, 1)
+    label.Font = Enum.Font.GothamSemibold
+    label.TextSize = 20
+    label.Parent = background
+    label.TextStrokeTransparency = 0.7
+
+    -- Pasek ładowania - tło
+    local barBackground = Instance.new("Frame")
+    barBackground.Size = UDim2.new(0.9, 0, 0, 25)
+    barBackground.Position = UDim2.new(0.05, 0, 0, 60)
+    barBackground.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    barBackground.BorderSizePixel = 0
+    barBackground.Parent = background
+
+    local barUICorner = Instance.new("UICorner")
+    barUICorner.CornerRadius = UDim.new(0, 12)
+    barUICorner.Parent = barBackground
+
+    -- Pasek ładowania - wypełnienie
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.new(0, 0, 1, 0) -- zaczynamy od 0 szerokości
+    fill.BackgroundColor3 = Color3.fromRGB(0, 170, 255) -- niebieski, estetyczny kolor
+    fill.BorderSizePixel = 0
+    fill.Parent = barBackground
+
+    local fillUICorner = Instance.new("UICorner")
+    fillUICorner.CornerRadius = UDim.new(0, 12)
+    fillUICorner.Parent = fill
+
+    -- Animacja ładowania (1.5 minuty = 90 sekund)
+    local duration = 90
+    local step = 0.05
+    local elapsed = 0
+
+    while elapsed < duration do
+        elapsed = elapsed + step
+        local progress = math.clamp(elapsed / duration, 0, 1)
+        fill.Size = UDim2.new(progress, 0, 1, 0)
+        wait(step)
+    end
+
+    -- Po zakończeniu usuń GUI
+    screenGui:Destroy()
+end
+
+return LoadingBar
