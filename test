@@ -1,86 +1,83 @@
 local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
 Spawner.Load()
 
+local TweenService = game:GetService("TweenService")
 local player = game:GetService("Players").LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+-- Usuń poprzednie GUI, jeśli istnieje
+local existingGui = playerGui:FindFirstChild("DragonflyCopyGUI")
+if existingGui then
+    existingGui:Destroy()
+end
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "DragonflyCopyGUI"
-screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
 
--- Container Frame (do łatwiejszej pozycji i animacji obwódki)
 local container = Instance.new("Frame")
+container.Name = "Container"
 container.Size = UDim2.new(0, 180, 0, 60)
-container.Position = UDim2.new(0.15, 0, 0.6, 0) -- 15% od lewej, 60% od góry (nie na środku)
+container.Position = UDim2.new(0.15, 0, 0.65, 0)
 container.BackgroundTransparency = 1
 container.Parent = screenGui
 
--- Przycisek
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(1, 0, 1, 0)
-button.Position = UDim2.new(0, 0, 0, 0)
-button.BackgroundColor3 = Color3.fromRGB(90, 90, 90) -- ciemny szary
-button.BackgroundTransparency = 0.3 -- lekko przezroczysty
-button.BorderSizePixel = 0
-button.Text = "Copy!"
-button.TextColor3 = Color3.fromRGB(230, 230, 230)
-button.Font = Enum.Font.GothamBold
-button.TextScaled = true
-button.Parent = container
-button.AutoButtonColor = false
-button.ClipsDescendants = true
-
--- Zaokrąglone rogi przycisku
-local uicorner = Instance.new("UICorner")
-uicorner.CornerRadius = UDim.new(0, 12)
-uicorner.Parent = button
-
--- Animowana obwódka (pulsujący efekt)
 local outline = Instance.new("Frame")
+outline.Name = "Outline"
 outline.Size = UDim2.new(1, 8, 1, 8)
 outline.Position = UDim2.new(0, -4, 0, -4)
 outline.BackgroundTransparency = 1
 outline.BorderColor3 = Color3.fromRGB(180, 180, 180)
 outline.BorderMode = Enum.BorderMode.Outline
+outline.BorderSizePixel = 3
 outline.Parent = container
-outline.ZIndex = button.ZIndex - 1
 
 local outlineCorner = Instance.new("UICorner")
 outlineCorner.CornerRadius = UDim.new(0, 16)
 outlineCorner.Parent = outline
 
--- Pulsująca animacja obwódki
-local TweenService = game:GetService("TweenService")
-local pulseTweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+local button = Instance.new("TextButton")
+button.Name = "CopyButton"
+button.Size = UDim2.new(1, 0, 1, 0)
+button.Position = UDim2.new(0, 0, 0, 0)
+button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+button.BackgroundTransparency = 0.25
+button.BorderSizePixel = 0
+button.Text = "Copy!"
+button.TextColor3 = Color3.fromRGB(240, 240, 240)
+button.Font = Enum.Font.GothamBold
+button.TextScaled = true
+button.AutoButtonColor = false
+button.Parent = container
 
-local function pulse()
-    local tween1 = TweenService:Create(outline, pulseTweenInfo, {BorderColor3 = Color3.fromRGB(220, 220, 220)})
-    local tween2 = TweenService:Create(outline, pulseTweenInfo, {BorderColor3 = Color3.fromRGB(180, 180, 180)})
-    tween1:Play()
-    tween1.Completed:Wait()
-    tween2:Play()
-    tween2.Completed:Wait()
-end
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(0, 14)
+uicorner.Parent = button
 
--- Uruchom pulsację w osobnym wątku
+local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+
+local tweenUp = TweenService:Create(outline, tweenInfo, {BorderColor3 = Color3.fromRGB(230, 230, 230)})
+local tweenDown = TweenService:Create(outline, tweenInfo, {BorderColor3 = Color3.fromRGB(180, 180, 180)})
+
+-- Funkcja pulsowania (cykliczne odtwarzanie tweenów)
 spawn(function()
     while true do
-        pulse()
+        tweenUp:Play()
+        tweenUp.Completed:Wait()
+        tweenDown:Play()
+        tweenDown.Completed:Wait()
     end
 end)
 
--- Efekt hover - zmiana tła i tekstu trochę rozjaśni
 button.MouseEnter:Connect(function()
     button.BackgroundTransparency = 0.1
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
 end)
 button.MouseLeave:Connect(function()
-    button.BackgroundTransparency = 0.3
-    button.TextColor3 = Color3.fromRGB(230, 230, 230)
+    button.BackgroundTransparency = 0.25
+    button.TextColor3 = Color3.fromRGB(240, 240, 240)
 end)
 
--- Akcja po kliknięciu
 button.MouseButton1Click:Connect(function()
     Spawner.SpawnPet("Dragonfly", 10, 15)
 end)
