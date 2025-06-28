@@ -5,7 +5,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 local RACCOON_MODEL_ID = 135221246355942
 local hasRaccoon = false
 
--- Funkcja do wyświetlania statusu na dole ekranu
+-- Wyświetlanie tekstu statusu na dole ekranu
 local function showStatus(text)
     local screenGui = playerGui:FindFirstChild("RaccoonStatusGui")
     if not screenGui then
@@ -40,7 +40,7 @@ local function loadRaccoonModel()
     return assets[1]
 end
 
--- Tworzy GUI z przyciskiem na środku
+-- Tworzymy GUI z przyciskiem na środku
 local function createButton()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "RaccoonButtonGui"
@@ -69,18 +69,21 @@ local function createButton()
             return
         end
 
-        -- Tworzymy Tool
         local tool = Instance.new("Tool")
         tool.Name = "Raccoon"
         tool.RequiresHandle = true
         tool.CanBeDropped = false
 
-        -- Znajdujemy handle (BasePart lub Model) w modelu
-        local handle
-        for _, child in pairs(model:GetChildren()) do
-            if child:IsA("BasePart") or child:IsA("Model") then
-                handle = child
-                break
+        local handle = nil
+
+        if model:IsA("BasePart") then
+            handle = model
+        elseif model:IsA("Model") then
+            for _, child in pairs(model:GetChildren()) do
+                if child:IsA("BasePart") then
+                    handle = child
+                    break
+                end
             end
         end
 
@@ -93,7 +96,6 @@ local function createButton()
         handle.Name = "Handle"
         handle.Parent = tool
 
-        -- Ustawiamy PrimaryPart jeśli handle jest modelem
         if handle:IsA("Model") then
             if not handle.PrimaryPart then
                 for _, part in pairs(handle:GetChildren()) do
