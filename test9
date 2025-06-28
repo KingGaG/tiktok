@@ -4,9 +4,6 @@ pcall(function()
     end
 end)
 
-local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-
--- GUI creation
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "PetCopyUI"
 ScreenGui.ResetOnSpawn = false
@@ -29,7 +26,6 @@ local UIStroke = Instance.new("UIStroke", mainFrame)
 UIStroke.Thickness = 2
 UIStroke.Color = Color3.fromRGB(200, 100, 255)
 
--- Glow effect
 local glow = Instance.new("UIGradient", mainFrame)
 glow.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0.0, Color3.fromRGB(180, 0, 255)),
@@ -37,7 +33,6 @@ glow.Color = ColorSequence.new{
 }
 glow.Rotation = 45
 
--- Title
 local title = Instance.new("TextLabel")
 title.Text = "PetCopy script - 1.0.0"
 title.Font = Enum.Font.GothamBold
@@ -49,7 +44,6 @@ title.Size = UDim2.new(1, -10, 0, 20)
 title.AnchorPoint = Vector2.new(0.5, 0)
 title.Parent = mainFrame
 
--- Made by
 local credit = Instance.new("TextLabel")
 credit.Text = "Made by KingGaG"
 credit.Font = Enum.Font.GothamSemibold
@@ -61,10 +55,9 @@ credit.Size = UDim2.new(1, -10, 0, 20)
 credit.AnchorPoint = Vector2.new(0.5, 1)
 credit.Parent = mainFrame
 
--- Button
 local button = Instance.new("TextButton")
 button.Text = "Copy!"
-button.Font = Enum.Font.GothamBold -- bardziej czytelna czcionka
+button.Font = Enum.Font.GothamBold
 button.TextSize = 24
 button.TextColor3 = Color3.new(1, 1, 1)
 button.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
@@ -83,7 +76,6 @@ local btnStroke = Instance.new("UIStroke", button)
 btnStroke.Color = Color3.fromRGB(255, 255, 255)
 btnStroke.Thickness = 2
 
--- Hover & Click animation
 local TweenService = game:GetService("TweenService")
 
 button.MouseEnter:Connect(function()
@@ -103,7 +95,12 @@ button.MouseButton1Click:Connect(function()
     TweenService:Create(button, TweenInfo.new(0.15), {
         Size = UDim2.new(0.65, 0, 0.4, 0)
     }):Play()
+
+    -- Załaduj świeży Spawner
+    local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+    Spawner.Load()
     Spawner.SpawnPet("Dragonfly", 1, 2)
+
     wait(0.3)
     TweenService:Create(button, TweenInfo.new(0.15), {
         Size = UDim2.new(0.6, 0, 0.35, 0)
@@ -112,7 +109,7 @@ button.MouseButton1Click:Connect(function()
     button.Text = "Copy!"
 end)
 
--- Manual drag logic (działa zawsze)
+-- Manual drag logic
 local UserInputService = game:GetService("UserInputService")
 local dragging, dragInput, dragStart, startPos
 
