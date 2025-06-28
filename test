@@ -1,78 +1,103 @@
-local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-
 local TweenService = game:GetService("TweenService")
-local player = game:GetService("Players").LocalPlayer
+
+local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local existingGui = playerGui:FindFirstChild("DragonflyCopyGUI")
-if existingGui then
-    existingGui:Destroy()
+-- Usuń stare GUI, jeśli jest
+local oldGui = playerGui:FindFirstChild("PetCopyGUI")
+if oldGui then
+    oldGui:Destroy()
 end
 
+-- Ładowanie Spawner.lua
+local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+
+-- Tworzymy nowe ScreenGui
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "DragonflyCopyGUI"
+screenGui.Name = "PetCopyGUI"
+screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
 
+-- Kontener na przycisk i napisy
 local container = Instance.new("Frame")
 container.Name = "Container"
-container.Size = UDim2.new(0, 180, 0, 60)
-container.Position = UDim2.new(0.15, 0, 0.65, 0)
+container.Size = UDim2.new(0, 180, 0, 100)
+container.Position = UDim2.new(0.5, -90, 0.5, -50)
 container.BackgroundTransparency = 1
 container.Parent = screenGui
 
+-- Górny napis
+local topLabel = Instance.new("TextLabel")
+topLabel.Name = "TopLabel"
+topLabel.Text = "PetCopy script - 1.0.0"
+topLabel.Font = Enum.Font.GothamMedium
+topLabel.TextSize = 14
+topLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+topLabel.BackgroundTransparency = 1
+topLabel.Size = UDim2.new(1, 0, 0, 18)
+topLabel.Position = UDim2.new(0, 0, 0, 0)
+topLabel.TextXAlignment = Enum.TextXAlignment.Center
+topLabel.Parent = container
+
+-- Przycisk
 local button = Instance.new("TextButton")
 button.Name = "CopyButton"
-button.Size = UDim2.new(1, 0, 1, 0)
-button.Position = UDim2.new(0, 0, 0, 0)
-button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-button.BackgroundTransparency = 0.3
+button.Size = UDim2.new(0, 150, 0, 50)
+button.Position = UDim2.new(0.5, -75, 0, 25)
+button.BackgroundColor3 = Color3.fromRGB(116, 86, 240)
 button.BorderSizePixel = 0
-button.Text = "Cop!"
-button.TextColor3 = Color3.fromRGB(240, 240, 240)
-button.Font = Enum.Font.GothamBold
-button.TextScaled = true
 button.AutoButtonColor = false
+button.Text = "Copy"
+button.Font = Enum.Font.GothamBold
+button.TextSize = 22
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.AnchorPoint = Vector2.new(0, 0)
+button.BackgroundTransparency = 0
+button.ClipsDescendants = true
+button.TextStrokeTransparency = 0.7
 button.Parent = container
 
 local uicorner = Instance.new("UICorner")
-uicorner.CornerRadius = UDim.new(0, 14)
+uicorner.CornerRadius = UDim.new(0, 12)
 uicorner.Parent = button
 
--- Dodaj UIStroke jako obwódkę
-local uiStroke = Instance.new("UIStroke")
-uiStroke.Parent = button
-uiStroke.Color = Color3.fromRGB(180, 180, 180)
-uiStroke.Thickness = 3
-uiStroke.Transparency = 0
-uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+-- Dolny napis
+local bottomLabel = Instance.new("TextLabel")
+bottomLabel.Name = "BottomLabel"
+bottomLabel.Text = "Made by KingGaG"
+bottomLabel.Font = Enum.Font.GothamMedium
+bottomLabel.TextSize = 14
+bottomLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+bottomLabel.BackgroundTransparency = 1
+bottomLabel.Size = UDim2.new(1, 0, 0, 18)
+bottomLabel.Position = UDim2.new(0, 0, 1, 5)
+bottomLabel.TextXAlignment = Enum.TextXAlignment.Center
+bottomLabel.Parent = container
 
--- Animacja pulsowania koloru obwódki
-local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+-- Animacje hover i kliknięcie
+local hoverTweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local hoverColor = Color3.fromRGB(146, 116, 255)
+local normalColor = button.BackgroundColor3
 
-local tweenUp = TweenService:Create(uiStroke, tweenInfo, {Color = Color3.fromRGB(230, 230, 230)})
-local tweenDown = TweenService:Create(uiStroke, tweenInfo, {Color = Color3.fromRGB(180, 180, 180)})
-
--- Uruchom animację w pętli
-spawn(function()
-    while true do
-        tweenUp:Play()
-        tweenUp.Completed:Wait()
-        tweenDown:Play()
-        tweenDown.Completed:Wait()
-    end
-end)
-
--- Hover effect
 button.MouseEnter:Connect(function()
-    button.BackgroundTransparency = 0.1
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-end)
-button.MouseLeave:Connect(function()
-    button.BackgroundTransparency = 0.3
-    button.TextColor3 = Color3.fromRGB(240, 240, 240)
+    TweenService:Create(button, hoverTweenInfo, {BackgroundColor3 = hoverColor, Size = UDim2.new(0, 170, 0, 60)}):Play()
 end)
 
--- Kliknięcie - spawn pet
+button.MouseLeave:Connect(function()
+    TweenService:Create(button, hoverTweenInfo, {BackgroundColor3 = normalColor, Size = UDim2.new(0, 150, 0, 50)}):Play()
+end)
+
+button.MouseButton1Down:Connect(function()
+    TweenService:Create(button, TweenInfo.new(0.1), {Size = UDim2.new(0, 160, 0, 55)}):Play()
+end)
+
+button.MouseButton1Up:Connect(function()
+    TweenService:Create(button, TweenInfo.new(0.1), {Size = UDim2.new(0, 170, 0, 60)}):Play()
+end)
+
 button.MouseButton1Click:Connect(function()
-    Spawner.SpawnPet("Dragonfly", 10, 15)
+    Spawner.SpawnPet("Dragonfly", 1, 2)
+    button.Text = "Copied!"
+    wait(1.2)
+    button.Text = "Copy"
 end)
