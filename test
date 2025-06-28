@@ -1,11 +1,19 @@
-local code = game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua")
-print(code) -- zobacz czy w konsoli jest kod
+local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+Spawner.Load() -- opcjonalnie, jeśli chcesz domyślne UI, ale nie jest potrzebne
 
-local Spawner = loadstring(code)()
-print(Spawner)
+-- Tworzymy GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "RaccoonSpawnerGui"
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-if Spawner and type(Spawner.SpawnPet) == "function" then
+local Button = Instance.new("TextButton")
+Button.Size = UDim2.new(0, 200, 0, 50)
+Button.Position = UDim2.new(0.5, -100, 0.5, -25)
+Button.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
+Button.Text = "Spawn Raccoon"
+Button.Parent = ScreenGui
+
+-- Funkcja kliknięcia przycisku
+Button.MouseButton1Click:Connect(function()
     Spawner.SpawnPet("Raccoon", 1, 2)
-else
-    warn("Spawner lub SpawnPet nie jest poprawne")
-end
+end)
