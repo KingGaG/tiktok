@@ -3,10 +3,11 @@ local TweenService = game:GetService("TweenService")
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Usuń stare GUI, jeśli jest
-local oldGui = playerGui:FindFirstChild("PetCopyGUI")
-if oldGui then
-    oldGui:Destroy()
+-- 🧹 USUWANIE STAREGO GUI
+for _, gui in pairs(playerGui:GetChildren()) do
+    if gui:IsA("ScreenGui") and gui.Name == "PetCopyGUI" then
+        gui:Destroy()
+    end
 end
 
 -- Ładowanie Spawner.lua
