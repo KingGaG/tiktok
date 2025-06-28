@@ -35,15 +35,25 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "SpawnerButtonGui"
 screenGui.Parent = playerGui
 
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SpawnerButtonGui"
+screenGui.Parent = playerGui
+
 local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.5, -25)
-button.BackgroundColor3 = Color3.fromRGB(45, 120, 225)
+button.Size = UDim2.new(0, 180, 0, 50) -- trochę mniejszy szerokością
+button.Position = UDim2.new(0.5, -90, 0.5, -65) -- 40px wyżej niż środek (środek to -25, teraz -65)
+button.BackgroundColor3 = Color3.fromRGB(72, 138, 255) -- ładny niebieski
 button.TextColor3 = Color3.new(1, 1, 1)
-button.Font = Enum.Font.SourceSansBold
+button.Font = Enum.Font.GothamBold
 button.TextSize = 24
-button.Text = "Spawn Raccoon Pet"
+button.Text = "Copy!"
 button.Parent = screenGui
+
+-- Zaokrąglone rogi
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(0, 10)
+uicorner.Parent = button
+
 
 button.MouseButton1Click:Connect(function()
     local ok, err = pcall(function()
