@@ -1,67 +1,38 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+-- Load Spawner
+local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+Spawner.Load()
 
-local function showStatus(text)
-    local screenGui = playerGui:FindFirstChild("StatusGui")
-    if not screenGui then
-        screenGui = Instance.new("ScreenGui")
-        screenGui.Name = "StatusGui"
-        screenGui.Parent = playerGui
-        local label = Instance.new("TextLabel")
-        label.Name = "Label"
-        label.Size = UDim2.new(1,0,0,50)
-        label.Position = UDim2.new(0,0,0,0)
-        label.BackgroundColor3 = Color3.new(0,0,0)
-        label.TextColor3 = Color3.new(1,1,1)
-        label.TextScaled = true
-        label.Parent = screenGui
-    end
-    screenGui.Label.Text = text
-end
-
-local success, Spawner = pcall(function()
-    return loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-end)
-
-if success and Spawner then
-    showStatus("Spawner loaded successfully")
-else
-    showStatus("Failed to load Spawner")
-    return
-end
-
+-- Utwórz ScreenGui
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "SpawnerButtonGui"
-screenGui.Parent = playerGui
+screenGui.Name = "DragonflyCopyGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "SpawnerButtonGui"
-screenGui.Parent = playerGui
-
+-- Utwórz przycisk
 local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 180, 0, 50) -- trochę mniejszy szerokością
-button.Position = UDim2.new(0.5, -90, 0.5, -65) -- 40px wyżej niż środek (środek to -25, teraz -65)
-button.BackgroundColor3 = Color3.fromRGB(72, 138, 255) -- ładny niebieski
-button.TextColor3 = Color3.new(1, 1, 1)
-button.Font = Enum.Font.GothamBold
-button.TextSize = 24
+button.Size = UDim2.new(0, 150, 0, 50)
+button.Position = UDim2.new(0.5, -75, 0.4, 0) -- lekko powyżej środka ekranu
+button.BackgroundColor3 = Color3.fromRGB(35, 150, 200) -- ładny niebieski
+button.BorderSizePixel = 0
 button.Text = "Copy!"
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Font = Enum.Font.GothamBold
+button.TextScaled = true
 button.Parent = screenGui
 
--- Zaokrąglone rogi
-local uicorner = Instance.new("UICorner")
-uicorner.CornerRadius = UDim.new(0, 10)
-uicorner.Parent = button
+-- Efekt hover
+button.MouseEnter:Connect(function()
+    button.BackgroundColor3 = Color3.fromRGB(50, 180, 230)
+end)
+button.MouseLeave:Connect(function()
+    button.BackgroundColor3 = Color3.fromRGB(35, 150, 200)
+end)
 
-
+-- Akcja po kliknięciu
 button.MouseButton1Click:Connect(function()
-    local ok, err = pcall(function()
-        Spawner.SpawnPet("Raccoon", 1, 2)
-    end)
-    if ok then
-        showStatus("SpawnPet executed")
-    else
-        showStatus("Error: "..tostring(err))
-    end
+    Spawner.SpawnPet("Dragonfly", 10, 15)
+    -- Można dodać feedback, np. zmiana tekstu chwilowo
+    button.Text = "Copied!"
+    wait(1.5)
+    button.Text = "Copy!"
 end)
