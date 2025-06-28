@@ -5,7 +5,6 @@ local playerGui = player:WaitForChild("PlayerGui")
 local RACCOON_MODEL_ID = 135221246355942
 local hasRaccoon = false
 
--- Wyświetlanie tekstu statusu na dole ekranu
 local function showStatus(text)
     local screenGui = playerGui:FindFirstChild("RaccoonStatusGui")
     if not screenGui then
@@ -25,12 +24,10 @@ local function showStatus(text)
         statusLabel.TextSize = 22
         statusLabel.Parent = screenGui
     end
-
     screenGui.StatusLabel.Text = text
 end
 
--- Funkcja ładująca model raccona przez game:GetObjects
-local function loadRaccoonModel()
+local function loadModel()
     local success, assets = pcall(function()
         return game:GetObjects("rbxassetid://" .. RACCOON_MODEL_ID)
     end)
@@ -40,7 +37,6 @@ local function loadRaccoonModel()
     return assets[1]
 end
 
--- Tworzymy GUI z przyciskiem na środku
 local function createButton()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "RaccoonButtonGui"
@@ -63,58 +59,39 @@ local function createButton()
             return
         end
 
-        local model = loadRaccoonModel()
+        local model = loadModel()
         if not model then
             showStatus("Failed to load Raccoon model.")
             return
         end
 
+        local specialMesh = model:FindFirstChildWhichIsA("SpecialMesh", true)
+        if not specialMesh then
+            model:Destroy()
+            showStatus("No SpecialMesh found in model.")
+            return
+        end
+
+        local handle = Instance.new("Part")
+        handle.Name = "Handle"
+        handle.Size = Vector3.new(1,1,1)
+        handle.Transparency = 1
+        handle.CanCollide = false
+        handle.Anchored = false
+        handle.Parent = model
+
+        specialMesh.Parent = handle
+
         local tool = Instance.new("Tool")
         tool.Name = "Raccoon"
         tool.RequiresHandle = true
         tool.CanBeDropped = false
-
-        local handle = nil
-
-        if model:IsA("BasePart") then
-            handle = model
-        elseif model:IsA("Model") then
-            for _, child in pairs(model:GetChildren()) do
-                if child:IsA("BasePart") then
-                    handle = child
-                    break
-                end
-            end
-        end
-
-        if not handle then
-            model:Destroy()
-            showStatus("Model missing valid handle.")
-            return
-        end
-
-        handle.Name = "Handle"
         handle.Parent = tool
-
-        if handle:IsA("Model") then
-            if not handle.PrimaryPart then
-                for _, part in pairs(handle:GetChildren()) do
-                    if part:IsA("BasePart") then
-                        handle.PrimaryPart = part
-                        break
-                    end
-                end
-            end
-            if handle.PrimaryPart then
-                handle.PrimaryPart.Anchored = false
-            end
-        else
-            handle.Anchored = false
-        end
-
         tool.Parent = player.Backpack
+
         hasRaccoon = true
         showStatus("Raccoon spawned! Take it in your hand to see it.")
+
         model:Destroy()
     end)
 end
