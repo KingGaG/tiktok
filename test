@@ -5,24 +5,67 @@ function LoadingBar.Load()
     local player = Players.LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
 
+    -- Stwórz ScreenGui
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "LoadingScreen"
     screenGui.Parent = playerGui
 
+    -- Tło paska (ciemne, półprzezroczyste)
     local background = Instance.new("Frame")
-    background.Size = UDim2.new(0.4, 0, 0.05, 0)
-    background.Position = UDim2.new(0.3, 0, 0.45, 0)
-    background.BackgroundColor3 = Color3.new(0, 0, 0)
-    background.BackgroundTransparency = 0.5
-    background.Parent = screenGui
+    background.Size = UDim2.new(0.5, 0, 0.06, 0)
+    background.Position = UDim2.new(0.25, 0, 0.47, 0)
+    background.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    background.BackgroundTransparency = 0.2
     background.AnchorPoint = Vector2.new(0, 0)
+    background.BorderSizePixel = 0
+    background.Parent = screenGui
+    background.ClipsDescendants = true
+    background.ZIndex = 2
+    background.Rotation = 0
 
+    -- Zaokrąglone rogi tła
+    local bgUICorner = Instance.new("UICorner")
+    bgUICorner.CornerRadius = UDim.new(0, 12)
+    bgUICorner.Parent = background
+
+    -- Cień (efekt rozmycia pod paskiem)
+    local shadow = Instance.new("Frame")
+    shadow.Size = UDim2.new(1, 8, 1, 8)
+    shadow.Position = UDim2.new(0, -4, 0, -4)
+    shadow.BackgroundColor3 = Color3.new(0, 0, 0)
+    shadow.BackgroundTransparency = 0.7
+    shadow.ZIndex = 1
+    shadow.Parent = background
+    local shadowUICorner = Instance.new("UICorner")
+    shadowUICorner.CornerRadius = UDim.new(0, 14)
+    shadowUICorner.Parent = shadow
+
+    -- Wypełnienie paska (zielony, zaokrąglony)
     local fill = Instance.new("Frame")
     fill.Size = UDim2.new(0, 0, 1, 0)
     fill.Position = UDim2.new(0, 0, 0, 0)
-    fill.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(0, 210, 0)
+    fill.BorderSizePixel = 0
+    fill.ZIndex = 3
     fill.Parent = background
 
+    local fillUICorner = Instance.new("UICorner")
+    fillUICorner.CornerRadius = UDim.new(0, 12)
+    fillUICorner.Parent = fill
+
+    -- Tekst procentowy na pasku
+    local percentText = Instance.new("TextLabel")
+    percentText.Size = UDim2.new(1, 0, 1, 0)
+    percentText.Position = UDim2.new(0, 0, 0, 0)
+    percentText.BackgroundTransparency = 1
+    percentText.TextColor3 = Color3.new(1,1,1)
+    percentText.Font = Enum.Font.GothamBold
+    percentText.TextSize = 20
+    percentText.Text = "0%"
+    percentText.ZIndex = 4
+    percentText.Parent = background
+
+    -- Animacja ładowania
     local duration = 5
     local step = 0.01
     local elapsed = 0
@@ -31,9 +74,11 @@ function LoadingBar.Load()
         elapsed = elapsed + step
         local progress = math.clamp(elapsed / duration, 0, 1)
         fill.Size = UDim2.new(progress, 0, 1, 0)
+        percentText.Text = math.floor(progress * 100).."%"
         wait(step)
     end
 
+    -- Usuwamy GUI po załadowaniu
     screenGui:Destroy()
 end
 
