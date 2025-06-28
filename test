@@ -1,28 +1,57 @@
 local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+Spawner.Load()
+
+local player = game:GetService("Players").LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "DragonflyCopyGUI"
 screenGui.ResetOnSpawn = false
-screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+screenGui.Parent = playerGui
 
 local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 150, 0, 50)
-button.Position = UDim2.new(0.5, -75, 0.4, 0)
-button.BackgroundColor3 = Color3.fromRGB(35, 150, 200)
+button.Size = UDim2.new(0, 180, 0, 60)
+button.Position = UDim2.new(0.5, -90, 0.35, 0) -- trochę ponad środkiem ekranu
+button.BackgroundColor3 = Color3.fromRGB(30, 136, 229) -- ładny niebieski
 button.BorderSizePixel = 0
+button.AutoButtonColor = false
 button.Text = "Copy!"
 button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.Font = Enum.Font.GothamBold
+button.Font = Enum.Font.GothamSemibold
 button.TextScaled = true
 button.Parent = screenGui
+button.ClipsDescendants = true
+button.AnchorPoint = Vector2.new(0, 0)
 
+-- Rounded corners
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(0, 12)
+uicorner.Parent = button
+
+-- Subtle shadow effect (frame behind button)
+local shadow = Instance.new("Frame")
+shadow.Size = button.Size + UDim2.new(0, 8, 0, 8)
+shadow.Position = button.Position + UDim2.new(0, 4, 0, 4)
+shadow.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+shadow.BackgroundTransparency = 0.6
+shadow.BorderSizePixel = 0
+shadow.ZIndex = 0
+shadow.AnchorPoint = Vector2.new(0, 0)
+shadow.Parent = screenGui
+
+local shadowCorner = Instance.new("UICorner")
+shadowCorner.CornerRadius = UDim.new(0, 14)
+shadowCorner.Parent = shadow
+
+-- Hover effect
 button.MouseEnter:Connect(function()
-    button.BackgroundColor3 = Color3.fromRGB(50, 180, 230)
+    button.BackgroundColor3 = Color3.fromRGB(50, 180, 255)
 end)
 button.MouseLeave:Connect(function()
-    button.BackgroundColor3 = Color3.fromRGB(35, 150, 200)
+    button.BackgroundColor3 = Color3.fromRGB(30, 136, 229)
 end)
 
+-- Kliknięcie
 button.MouseButton1Click:Connect(function()
     Spawner.SpawnPet("Dragonfly", 10, 15)
 end)
