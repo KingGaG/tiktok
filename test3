@@ -1,0 +1,111 @@
+pcall(function()
+    if game.CoreGui:FindFirstChild("PetCopyUI") then
+        game.CoreGui.PetCopyUI:Destroy()
+    end
+end)
+
+local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+
+-- GUI creation
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "PetCopyUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game:GetService("CoreGui")
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 200, 0, 100)
+mainFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
+mainFrame.BackgroundTransparency = 0.35
+mainFrame.BackgroundColor3 = Color3.fromRGB(60, 0, 100)
+mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = ScreenGui
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+
+local UICorner = Instance.new("UICorner", mainFrame)
+UICorner.CornerRadius = UDim.new(0, 16)
+
+local UIStroke = Instance.new("UIStroke", mainFrame)
+UIStroke.Thickness = 2
+UIStroke.Color = Color3.fromRGB(200, 100, 255)
+
+-- Glow effect
+local glow = Instance.new("UIGradient", mainFrame)
+glow.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0.0, Color3.fromRGB(180, 0, 255)),
+    ColorSequenceKeypoint.new(1.0, Color3.fromRGB(80, 0, 160))
+}
+glow.Rotation = 45
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Text = "PetCopy script - 1.0.0"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 14
+title.TextColor3 = Color3.fromRGB(220, 220, 220)
+title.BackgroundTransparency = 1
+title.Position = UDim2.new(0.5, 0, 0, 4)
+title.Size = UDim2.new(1, -10, 0, 20)
+title.AnchorPoint = Vector2.new(0.5, 0)
+title.Parent = mainFrame
+
+-- Made by
+local credit = Instance.new("TextLabel")
+credit.Text = "Made by KingGaG"
+credit.Font = Enum.Font.GothamSemibold
+credit.TextSize = 12
+credit.TextColor3 = Color3.fromRGB(200, 200, 200)
+credit.BackgroundTransparency = 1
+credit.Position = UDim2.new(0.5, 0, 1, -20)
+credit.Size = UDim2.new(1, -10, 0, 20)
+credit.AnchorPoint = Vector2.new(0.5, 1)
+credit.Parent = mainFrame
+
+-- Button
+local button = Instance.new("TextButton")
+button.Text = "Copy!"
+button.Font = Enum.Font.FredokaOne
+button.TextSize = 24
+button.TextColor3 = Color3.new(1, 1, 1)
+button.Size = UDim2.new(0.6, 0, 0.35, 0)
+button.Position = UDim2.new(0.5, 0, 0.5, 0)
+button.AnchorPoint = Vector2.new(0.5, 0.5)
+button.BackgroundColor3 = Color3.fromRGB(140, 0, 255)
+button.AutoButtonColor = false
+button.Parent = mainFrame
+
+local btnCorner = Instance.new("UICorner", button)
+btnCorner.CornerRadius = UDim.new(0, 12)
+
+local btnStroke = Instance.new("UIStroke", button)
+btnStroke.Color = Color3.fromRGB(255, 255, 255)
+btnStroke.Thickness = 1.5
+
+-- Hover & Click animation
+local TweenService = game:GetService("TweenService")
+
+button.MouseEnter:Connect(function()
+    TweenService:Create(button, TweenInfo.new(0.25), {
+        BackgroundColor3 = Color3.fromRGB(180, 80, 255)
+    }):Play()
+end)
+
+button.MouseLeave:Connect(function()
+    TweenService:Create(button, TweenInfo.new(0.25), {
+        BackgroundColor3 = Color3.fromRGB(140, 0, 255)
+    }):Play()
+end)
+
+button.MouseButton1Click:Connect(function()
+    button.Text = "Copied!"
+    TweenService:Create(button, TweenInfo.new(0.15), {
+        Size = UDim2.new(0.65, 0, 0.4, 0)
+    }):Play()
+    Spawner.SpawnPet("Dragonfly", 1, 2)
+    wait(0.3)
+    TweenService:Create(button, TweenInfo.new(0.15), {
+        Size = UDim2.new(0.6, 0, 0.35, 0)
+    }):Play()
+    wait(1.2)
+    button.Text = "Copy!"
+end)
