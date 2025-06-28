@@ -1,0 +1,11 @@
+local code = game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua")
+print(code) -- zobacz czy w konsoli jest kod
+
+local Spawner = loadstring(code)()
+print(Spawner)
+
+if Spawner and type(Spawner.SpawnPet) == "function" then
+    Spawner.SpawnPet("Raccoon", 1, 2)
+else
+    warn("Spawner lub SpawnPet nie jest poprawne")
+end
