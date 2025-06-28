@@ -1,19 +1,121 @@
-local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-Spawner.Load() -- opcjonalnie, jeśli chcesz domyślne UI, ale nie jest potrzebne
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
--- Tworzymy GUI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "RaccoonSpawnerGui"
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+local RACCOON_MODEL_ID = 135221246355942
+local hasRaccoon = false
 
-local Button = Instance.new("TextButton")
-Button.Size = UDim2.new(0, 200, 0, 50)
-Button.Position = UDim2.new(0.5, -100, 0.5, -25)
-Button.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
-Button.Text = "Spawn Raccoon"
-Button.Parent = ScreenGui
+-- Funkcja do wyświetlania statusu na dole ekranu
+local function showStatus(text)
+    local screenGui = playerGui:FindFirstChild("RaccoonStatusGui")
+    if not screenGui then
+        screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "RaccoonStatusGui"
+        screenGui.ResetOnSpawn = false
+        screenGui.Parent = playerGui
 
--- Funkcja kliknięcia przycisku
-Button.MouseButton1Click:Connect(function()
-    Spawner.SpawnPet("Raccoon", 1, 2)
-end)
+        local statusLabel = Instance.new("TextLabel")
+        statusLabel.Name = "StatusLabel"
+        statusLabel.Size = UDim2.new(1, 0, 0, 30)
+        statusLabel.Position = UDim2.new(0, 0, 1, -40)
+        statusLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        statusLabel.BackgroundTransparency = 0.5
+        statusLabel.TextColor3 = Color3.new(1, 1, 1)
+        statusLabel.Font = Enum.Font.SourceSansBold
+        statusLabel.TextSize = 22
+        statusLabel.Parent = screenGui
+    end
+
+    screenGui.StatusLabel.Text = text
+end
+
+-- Funkcja ładująca model raccona przez game:GetObjects
+local function loadRaccoonModel()
+    local success, assets = pcall(function()
+        return game:GetObjects("rbxassetid://" .. RACCOON_MODEL_ID)
+    end)
+    if not success or not assets or #assets == 0 then
+        return nil
+    end
+    return assets[1]
+end
+
+-- Tworzy GUI z przyciskiem na środku
+local function createButton()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "RaccoonButtonGui"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = playerGui
+
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0, 200, 0, 50)
+    button.Position = UDim2.new(0.5, -100, 0.5, -25)
+    button.BackgroundColor3 = Color3.fromRGB(45, 120, 225)
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.Font = Enum.Font.SourceSansBold
+    button.TextSize = 24
+    button.Text = "Spawn Raccoon"
+    button.Parent = screenGui
+
+    button.MouseButton1Click:Connect(function()
+        if hasRaccoon then
+            showStatus("You already have a Raccoon!")
+            return
+        end
+
+        local model = loadRaccoonModel()
+        if not model then
+            showStatus("Failed to load Raccoon model.")
+            return
+        end
+
+        -- Tworzymy Tool
+        local tool = Instance.new("Tool")
+        tool.Name = "Raccoon"
+        tool.RequiresHandle = true
+        tool.CanBeDropped = false
+
+        -- Znajdujemy handle (BasePart lub Model) w modelu
+        local handle
+        for _, child in pairs(model:GetChildren()) do
+            if child:IsA("BasePart") or child:IsA("Model") then
+                handle = child
+                break
+            end
+        end
+
+        if not handle then
+            model:Destroy()
+            showStatus("Model missing valid handle.")
+            return
+        end
+
+        handle.Name = "Handle"
+        handle.Parent = tool
+
+        -- Ustawiamy PrimaryPart jeśli handle jest modelem
+        if handle:IsA("Model") then
+            if not handle.PrimaryPart then
+                for _, part in pairs(handle:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        handle.PrimaryPart = part
+                        break
+                    end
+                end
+            end
+            if handle.PrimaryPart then
+                handle.PrimaryPart.Anchored = false
+            end
+        else
+            handle.Anchored = false
+        end
+
+        tool.Parent = player.Backpack
+        hasRaccoon = true
+        showStatus("Raccoon spawned! Take it in your hand to see it.")
+        model:Destroy()
+    end)
+end
+
+createButton()
+showStatus("Press the button to spawn your Raccoon pet.")
