@@ -22,9 +22,6 @@ mainFrame.ClipsDescendants = true
 mainFrame.Parent = ScreenGui
 mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 
-mainFrame.Active = true
-mainFrame.Draggable = true -- << DODANE przeciąganie GUI
-
 local UICorner = Instance.new("UICorner", mainFrame)
 UICorner.CornerRadius = UDim.new(0, 16)
 
@@ -67,9 +64,11 @@ credit.Parent = mainFrame
 -- Button
 local button = Instance.new("TextButton")
 button.Text = "Copy!"
-button.Font = Enum.Font.FredokaOne
+button.Font = Enum.Font.GothamBold -- bardziej czytelna czcionka
 button.TextSize = 24
 button.TextColor3 = Color3.new(1, 1, 1)
+button.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+button.TextStrokeTransparency = 0.5
 button.Size = UDim2.new(0.6, 0, 0.35, 0)
 button.Position = UDim2.new(0.5, 0, 0.5, 0)
 button.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -82,7 +81,7 @@ btnCorner.CornerRadius = UDim.new(0, 12)
 
 local btnStroke = Instance.new("UIStroke", button)
 btnStroke.Color = Color3.fromRGB(255, 255, 255)
-btnStroke.Thickness = 1.5
+btnStroke.Thickness = 2
 
 -- Hover & Click animation
 local TweenService = game:GetService("TweenService")
@@ -111,4 +110,35 @@ button.MouseButton1Click:Connect(function()
     }):Play()
     wait(1.2)
     button.Text = "Copy!"
+end)
+
+-- Manual drag logic (działa zawsze)
+local UserInputService = game:GetService("UserInputService")
+local dragging, dragInput, dragStart, startPos
+
+mainFrame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = mainFrame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
 end)
