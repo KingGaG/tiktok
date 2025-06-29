@@ -3,16 +3,16 @@ local gui = player:WaitForChild("PlayerGui")
 
 local UserInputService = game:GetService("UserInputService")
 
--- Znajdź oryginalny licznik sheckles
-local shecklesGui = gui:WaitForChild("Sheckles_UI", 10) -- czekaj do 10 sek
+-- Find original sheckles label
+local shecklesGui = gui:WaitForChild("Sheckles_UI", 10)
 if not shecklesGui then
-    warn("Nie znaleziono Sheckles_UI w PlayerGui!")
+    warn("Sheckles_UI not found in PlayerGui!")
     return
 end
 
 local label = shecklesGui:FindFirstChild("TextLabel")
 if not label then
-    warn("Nie znaleziono TextLabel w Sheckles_UI!")
+    warn("TextLabel not found in Sheckles_UI!")
     return
 end
 
@@ -21,7 +21,7 @@ local function getCurrencySymbol(text)
 end
 
 local function parseNumber(text)
-    local numStr = text:gsub("[^%d]", "") -- zostawia tylko cyfry
+    local numStr = text:gsub("[^%d]", "")
     return tonumber(numStr) or 0
 end
 
@@ -37,46 +37,89 @@ local function updateLabel(amount)
     label.Text = formatted .. " " .. currencySymbol
 end
 
--- Tworzymy nasze GUI z polem i przyciskiem
+-- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ShecklesAdderGui"
 screenGui.Parent = gui
 
+-- Main frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 220, 0, 100)
-frame.Position = UDim2.new(0, 20, 1, -140)
-frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.Size = UDim2.new(0, 270, 0, 120)
+frame.Position = UDim2.new(0, 20, 1, -160)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
 frame.Active = true
+frame.ClipsDescendants = true
+frame.AnchorPoint = Vector2.new(0, 0)
 
+-- Rounded corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = frame
+
+-- Shadow (ImageLabel with sliced image)
+local shadow = Instance.new("ImageLabel")
+shadow.Size = UDim2.new(1, 20, 1, 20)
+shadow.Position = UDim2.new(0, -10, 0, -10)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://505863718"
+shadow.ImageColor3 = Color3.new(0,0,0)
+shadow.ImageTransparency = 0.7
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10,10,118,118)
+shadow.Parent = frame
+shadow.ZIndex = frame.ZIndex - 1
+
+-- Title label
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -20, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 10)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(200, 200, 210)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.Text = "Add Shekels"
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
+
+-- Input box
 local inputBox = Instance.new("TextBox")
 inputBox.Size = UDim2.new(1, -20, 0, 40)
-inputBox.Position = UDim2.new(0, 10, 0, 10)
-inputBox.PlaceholderText = "Wpisz kwotę do dodania"
+inputBox.Position = UDim2.new(0, 10, 0, 45)
+inputBox.PlaceholderText = "Enter amount"
 inputBox.ClearTextOnFocus = false
 inputBox.Text = ""
 inputBox.Font = Enum.Font.Gotham
-inputBox.TextSize = 20
+inputBox.TextSize = 24
 inputBox.TextColor3 = Color3.fromRGB(230,230,230)
-inputBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+inputBox.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
 inputBox.BorderSizePixel = 0
 inputBox.TextXAlignment = Enum.TextXAlignment.Left
 inputBox.Parent = frame
 
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 8)
+inputCorner.Parent = inputBox
+
+-- Add button
 local button = Instance.new("TextButton")
 button.Size = UDim2.new(1, -20, 0, 40)
-button.Position = UDim2.new(0, 10, 0, 55)
-button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+button.Position = UDim2.new(0, 10, 0, 90)
+button.BackgroundColor3 = Color3.fromRGB(85, 170, 255)
 button.BorderSizePixel = 0
-button.Text = "Dodaj Sheckles"
+button.AutoButtonColor = true
 button.Font = Enum.Font.GothamBold
 button.TextSize = 22
 button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Text = "Add"
 button.Parent = frame
-button.AutoButtonColor = true
 
--- Drag & drop ramki
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 8)
+buttonCorner.Parent = button
+
+-- Drag & drop
 local dragging = false
 local dragStart
 local startPos
@@ -107,13 +150,14 @@ frame.InputChanged:Connect(function(input)
     end
 end)
 
+-- Animate adding shekels
+local isAnimating = false
+
 local function animateAdd(amountToAdd)
     if isAnimating then return end
     isAnimating = true
 
-    -- Odśwież aktualną kwotę na wypadek, gdyby zmieniła się z innych źródeł
     currentAmount = parseNumber(label.Text)
-
     local targetAmount = currentAmount + amountToAdd
     local increment = math.max(1, math.floor(amountToAdd / 50))
 
@@ -132,6 +176,6 @@ button.MouseButton1Click:Connect(function()
     if num and num > 0 then
         animateAdd(num)
     else
-        print("Wpisz poprawną liczbę większą od 0.")
+        warn("Please enter a valid positive number.")
     end
 end)
