@@ -7,7 +7,6 @@ local playerGui = player:WaitForChild("PlayerGui")
 
 local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
 
--- Usunięcie starego UI jeśli istnieje
 local oldUI = playerGui:FindFirstChild("SeedCopyUI")
 if oldUI then
     oldUI:Destroy()
@@ -28,12 +27,10 @@ button.AutoButtonColor = false
 button.Text = ""
 button.Parent = screenGui
 
--- Zaokrąglone rogi
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 20)
 corner.Parent = button
 
--- Gradient tła
 local gradient = Instance.new("UIGradient")
 gradient.Rotation = 45
 gradient.Color = ColorSequence.new{
@@ -42,20 +39,20 @@ gradient.Color = ColorSequence.new{
 }
 gradient.Parent = button
 
--- Delikatny cień (shadow)
 local shadow = Instance.new("ImageLabel")
 shadow.BackgroundTransparency = 1
 shadow.Size = UDim2.new(1, 20, 1, 20)
 shadow.Position = UDim2.new(0, -10, 0, -10)
-shadow.Image = "rbxassetid://1316045217" -- miękki cień
+shadow.Image = "rbxassetid://1316045217"
 shadow.ImageColor3 = Color3.new(0, 0, 0)
 shadow.ImageTransparency = 0.75
 shadow.ScaleType = Enum.ScaleType.Slice
 shadow.SliceCenter = Rect.new(10, 10, 118, 118)
 shadow.ZIndex = button.ZIndex - 1
+shadow.Active = false
+shadow.Selectable = false
 shadow.Parent = button
 
--- Mały napis u góry
 local topLabel = Instance.new("TextLabel")
 topLabel.Size = UDim2.new(1, 0, 0, 18)
 topLabel.Position = UDim2.new(0, 0, 0, 6)
@@ -67,7 +64,6 @@ topLabel.TextSize = 16
 topLabel.Parent = button
 topLabel.ZIndex = 2
 
--- Napis Copy na środku
 local mainLabel = Instance.new("TextLabel")
 mainLabel.Size = UDim2.new(1, 0, 0, 35)
 mainLabel.Position = UDim2.new(0, 0, 0, 20)
@@ -79,7 +75,6 @@ mainLabel.TextSize = 30
 mainLabel.Parent = button
 mainLabel.ZIndex = 2
 
--- Napis na dole
 local bottomLabel = Instance.new("TextLabel")
 bottomLabel.Size = UDim2.new(1, 0, 0, 18)
 bottomLabel.Position = UDim2.new(0, 0, 1, -22)
@@ -91,7 +86,6 @@ bottomLabel.TextSize = 14
 bottomLabel.Parent = button
 bottomLabel.ZIndex = 2
 
--- Animacja pulsowania koloru tła
 local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
 local tween1 = TweenService:Create(gradient, tweenInfo, {
     Color = ColorSequence.new{
@@ -101,16 +95,6 @@ local tween1 = TweenService:Create(gradient, tweenInfo, {
 })
 tween1:Play()
 
--- Efekt podświetlenia na hover
-button.MouseEnter:Connect(function()
-    TweenService:Create(button, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(255, 150, 210)}):Play()
-end)
-
-button.MouseLeave:Connect(function()
-    TweenService:Create(button, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(255, 120, 190)}):Play()
-end)
-
--- Drag & drop (ten sam sprawdzony kod z rozróżnianiem kliknięcia i drag)
 local dragging = false
 local dragInput
 local dragStart
@@ -128,7 +112,6 @@ button.InputBegan:Connect(function(input)
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
                 if not moved then
-                    -- Animacja kliknięcia
                     local clickTween = TweenService:Create(button, TweenInfo.new(0.15), {Size = UDim2.new(0, 160, 0, 62)})
                     local releaseTween = TweenService:Create(button, TweenInfo.new(0.15), {Size = UDim2.new(0, 180, 0, 70)})
 
