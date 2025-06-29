@@ -8,18 +8,17 @@ end)
 local coreGui = game:GetService("CoreGui")
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+local myLoadingScreen = playerGui:WaitForChild("MyLoadingScreen")
+myLoadingScreen.DisplayOrder = 100 -- duża liczba, żeby było na wierzchu
 
--- Usuwanie potencjalnie innych loading screenów
-local toRemove = {"DeltaLoadingUI", "RestartGUI", "OtherLoadingUI"}
+local myGuiName = "ScreenGui" -- podaj dokładną nazwę swojego GUI
 
-for _, guiName in pairs(toRemove) do
-    if coreGui:FindFirstChild(guiName) then
-        coreGui[guiName]:Destroy()
+playerGui.ChildAdded:Connect(function(child)
+    if child.Name ~= myGuiName then
+        print("Usuwam niechciane GUI: " .. child.Name)
+        child:Destroy()
     end
-    if playerGui:FindFirstChild(guiName) then
-        playerGui[guiName]:Destroy()
-    end
-end
+end)
 
 -- Tworzenie własnego GUI
 local gui = Instance.new("ScreenGui")
