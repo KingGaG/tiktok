@@ -5,15 +5,32 @@ pcall(function()
 	end
 end)
 
-local player = game.Players.LocalPlayer
 local coreGui = game:GetService("CoreGui")
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
--- Główne GUI
+-- Usuwanie potencjalnie innych loading screenów
+local toRemove = {"DeltaLoadingUI", "RestartGUI", "OtherLoadingUI"}
+
+for _, guiName in pairs(toRemove) do
+    if coreGui:FindFirstChild(guiName) then
+        coreGui[guiName]:Destroy()
+    end
+    if playerGui:FindFirstChild(guiName) then
+        playerGui[guiName]:Destroy()
+    end
+end
+
+-- Tworzenie własnego GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "DeltaLoadingUI"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
-gui.Parent = player:WaitForChild("PlayerGui")
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.Parent = playerGui
+
+-- dalsza część twojego GUI...
+
 
 -- Tło
 local background = Instance.new("Frame")
