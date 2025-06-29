@@ -48,7 +48,6 @@ corner.CornerRadius = UDim.new(0, 14)
 local dragging = false
 local dragInput, mousePos, framePos
 
--- Function to update frame position while dragging
 local function update(input)
     local delta = input.Position - mousePos
     frame.Position = UDim2.new(
@@ -59,16 +58,8 @@ local function update(input)
     )
 end
 
--- Set dragging only when click is outside interactive elements
 frame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        -- Check if mouse is over inputBox or button to avoid conflict
-        local mouse = player:GetMouse()
-        local target = mouse.Target
-        -- We'll allow dragging only if the mouse is over the frame but NOT over input or button
-        -- But simpler is: Start dragging always, but block dragging if inputBox or button got input
-
-        -- We'll just start dragging here
         dragging = true
         dragInput = input
         mousePos = input.Position
@@ -178,7 +169,7 @@ footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
 footer.Text = "Made by: KingGaG"
-footer.Font = Enum.Font.GothamItalic
+footer.Font = Enum.Font.SourceSansItalic
 footer.TextSize = 14
 footer.TextColor3 = Color3.fromRGB(180, 180, 180)
 footer.TextTransparency = 0.5
