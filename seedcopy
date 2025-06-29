@@ -25,7 +25,7 @@ button.Size = UDim2.new(0, 160, 0, 60)
 button.Position = UDim2.new(0.5, -80, 0.7, 0)
 button.AnchorPoint = Vector2.new(0.5, 0.5)
 button.BackgroundColor3 = Color3.fromRGB(255, 100, 180)
-button.AutoButtonColor = true
+button.AutoButtonColor = false -- wyłącz domyślny efekt, bo mamy własny
 button.Text = ""
 button.Parent = screenGui
 button.BorderSizePixel = 0
@@ -76,21 +76,37 @@ local tweenInfo = TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection
 local tween1 = TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(255, 70, 150)})
 tween1:Play()
 
--- Przesuwanie przycisku (drag & drop)
-local dragging
+-- Drag variables
+local dragging = false
 local dragInput
 local dragStart
 local startPos
+local moved = false
 
 button.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
         startPos = button.Position
+        moved = false
 
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
+                -- Jeśli przesunięto więcej niż 5px to traktuj jako drag a nie kliknięcie
+                if not moved then
+                    -- Kliknięcie (spawn seed)
+                    local clickTween = TweenService:Create(button, TweenInfo.new(0.15), {Size = UDim2.new(0, 140, 0, 55)})
+                    local releaseTween = TweenService:Create(button, TweenInfo.new(0.15), {Size = UDim2.new(0, 160, 0, 60)})
+
+                    clickTween:Play()
+                    clickTween.Completed:Wait()
+                    releaseTween:Play()
+
+                    pcall(function()
+                        Spawner.SpawnSeed("Candy Blossom")
+                    end)
+                end
             end
         end)
     end
@@ -105,6 +121,9 @@ end)
 UserInputService.InputChanged:Connect(function(input)
     if dragging and input == dragInput then
         local delta = input.Position - dragStart
+        if delta.Magnitude > 5 then
+            moved = true
+        end
         button.Position = UDim2.new(
             startPos.X.Scale,
             startPos.X.Offset + delta.X,
@@ -112,20 +131,4 @@ UserInputService.InputChanged:Connect(function(input)
             startPos.Y.Offset + delta.Y
         )
     end
-end)
-
--- Akcja po kliknięciu
-button.MouseButton1Click:Connect(function()
-    -- Krótka animacja kliknięcia
-    local clickTween = TweenService:Create(button, TweenInfo.new(0.15), {Size = UDim2.new(0, 140, 0, 55)})
-    local releaseTween = TweenService:Create(button, TweenInfo.new(0.15), {Size = UDim2.new(0, 160, 0, 60)})
-
-    clickTween:Play()
-    clickTween.Completed:Wait()
-    releaseTween:Play()
-
-    -- Spawn nasionka
-    pcall(function()
-        Spawner.SpawnSeed("Candy Blossom")
-    end)
 end)
