@@ -40,9 +40,10 @@ screenGui.Name = "ShecklesAdderGui"
 screenGui.Parent = gui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 280, 0, 160)  -- jeszcze większa wysokość
+frame.Size = UDim2.new(0, 280, 0, 180)  -- troszkę większa wysokość, żeby zmieścić stopkę
 frame.Position = UDim2.new(0, 20, 0, 20)
 frame.BackgroundColor3 = Color3.fromRGB(18, 18, 20)
+frame.BackgroundTransparency = 0.3  -- lekka przezroczystość
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
 frame.Active = true
@@ -68,6 +69,7 @@ local inputContainer = Instance.new("Frame")
 inputContainer.Size = UDim2.new(1, -40, 0, 40)
 inputContainer.Position = UDim2.new(0, 20, 0, 50)
 inputContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+inputContainer.BackgroundTransparency = 0.3 -- przezroczystość
 inputContainer.BorderSizePixel = 0
 inputContainer.Parent = frame
 local inputCorner = Instance.new("UICorner", inputContainer)
@@ -91,7 +93,7 @@ inputBox.Parent = inputContainer
 -- Add button container (for gradient)
 local buttonContainer = Instance.new("Frame")
 buttonContainer.Size = UDim2.new(1, -40, 0, 40)
-buttonContainer.Position = UDim2.new(0, 20, 0, 100)  -- przycisk trochę niżej
+buttonContainer.Position = UDim2.new(0, 20, 0, 100)
 buttonContainer.BackgroundColor3 = Color3.fromRGB(60, 135, 240)
 buttonContainer.BorderSizePixel = 0
 buttonContainer.Parent = frame
@@ -129,6 +131,19 @@ button.MouseLeave:Connect(function()
         ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 110, 230)),
     }
 end)
+
+-- Footer (stopka)
+local footer = Instance.new("TextLabel")
+footer.Size = UDim2.new(1, 0, 0, 20)
+footer.Position = UDim2.new(0, 0, 1, -20)  -- 20 px od dołu ramki
+footer.BackgroundTransparency = 1
+footer.Text = "Made by: KingGaG"
+footer.Font = Enum.Font.GothamItalic
+footer.TextSize = 14
+footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+footer.TextTransparency = 0.5
+footer.TextXAlignment = Enum.TextXAlignment.Center
+footer.Parent = frame
 
 -- Drag & drop
 local dragging = false
