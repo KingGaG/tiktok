@@ -1,0 +1,90 @@
+-- Usunięcie poprzedniego GUI jeśli istnieje
+pcall(function()
+    if game.CoreGui:FindFirstChild("DeltaLoadingUI") then
+        game.CoreGui.DeltaLoadingUI:Destroy()
+    end
+end)
+
+local player = game.Players.LocalPlayer
+local coreGui = game:GetService("CoreGui")
+
+-- Główne GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "DeltaLoadingUI"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = coreGui
+
+-- Tło
+local background = Instance.new("Frame")
+background.Size = UDim2.new(1, 0, 1, 0)
+background.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+background.BorderSizePixel = 0
+background.Parent = gui
+
+-- Gradient na tle
+local gradient = Instance.new("UIGradient")
+gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 0, 130)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 0, 60))
+}
+gradient.Rotation = 45
+gradient.Parent = background
+
+-- Tytuł / napis "Loading..."
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0, 500, 0, 50)
+title.Position = UDim2.new(0.5, -250, 0.35, 0)
+title.BackgroundTransparency = 1
+title.Text = "Loading Grow a Garden..."
+title.Font = Enum.Font.GothamSemibold
+title.TextSize = 36
+title.TextColor3 = Color3.fromRGB(220, 180, 255)
+title.TextStrokeTransparency = 0.5
+title.TextStrokeColor3 = Color3.fromRGB(100, 0, 180)
+title.TextWrapped = true
+title.Parent = background
+
+-- Pasek tła
+local barBG = Instance.new("Frame")
+barBG.Size = UDim2.new(0.6, 0, 0.04, 0)
+barBG.Position = UDim2.new(0.2, 0, 0.52, 0)
+barBG.BackgroundColor3 = Color3.fromRGB(40, 0, 70)
+barBG.BorderSizePixel = 0
+barBG.Parent = background
+
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(0, 8)
+barCorner.Parent = barBG
+
+-- Pasek ładowania (fiolet)
+local loadingBar = Instance.new("Frame")
+loadingBar.Size = UDim2.new(0, 0, 1, 0)
+loadingBar.BackgroundColor3 = Color3.fromRGB(180, 100, 255)
+loadingBar.BorderSizePixel = 0
+loadingBar.Parent = barBG
+
+local barGlow = Instance.new("UIGradient")
+barGlow.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(200, 120, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 80, 255))
+}
+barGlow.Rotation = 0
+barGlow.Parent = loadingBar
+
+local loadingCorner = Instance.new("UICorner")
+loadingCorner.CornerRadius = UDim.new(0, 8)
+loadingCorner.Parent = loadingBar
+
+-- Animacja ładowania paska
+task.spawn(function()
+	for i = 1, 100 do
+		local percent = i / 100
+		loadingBar:TweenSize(UDim2.new(percent, 0, 1, 0), "Out", "Sine", 0.04, true)
+		task.wait(0.03)
+	end
+
+	-- Czekaj chwilę i usuń GUI
+	task.wait(0.5)
+	if gui then gui:Destroy() end
+end)
