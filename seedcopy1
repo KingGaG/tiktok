@@ -1,39 +1,34 @@
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
 local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
 
--- Usunięcie starego UI jeśli istnieje
-local oldUI = playerGui:FindFirstChild("SeedCopyUI")
-if oldUI then
-    oldUI:Destroy()
+-- Usuwanie poprzedniego GUI, jeśli jest
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local existingGui = playerGui:FindFirstChild("PetCopyGui")
+if existingGui then
+    existingGui:Destroy()
 end
 
--- Utworzenie ScreenGui
+-- Tworzenie GUI
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "SeedCopyUI"
-screenGui.ResetOnSpawn = false
+screenGui.Name = "PetCopyGui"
 screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false  -- Dzięki temu GUI nie zniknie po respawnie
 
--- Główny przycisk (TextButton)
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 160, 0, 60)
-button.Position = UDim2.new(0.5, -80, 0.7, 0)
-button.AnchorPoint = Vector2.new(0.5, 0.5)
-button.BackgroundColor3 = Color3.fromRGB(255, 100, 180)
-button.AutoButtonColor = false -- wyłącz domyślny efekt, bo mamy własny
-button.Text = ""
-button.Parent = screenGui
-button.BorderSizePixel = 0
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 180, 0, 90)
+frame.Position = UDim2.new(0.5, -90, 0.5, -45)
+frame.BackgroundColor3 = Color3.fromRGB(40, 130, 220)
+frame.BackgroundTransparency = 0
+frame.BorderSizePixel = 0
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Parent = screenGui
+frame.ClipsDescendants = true
+frame.Name = "MainFrame"
 
--- Zaokrąglenie boków
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 15)
-corner.Parent = button
+-- Zaokrąglone rogi
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(0, 15)
+uicorner.Parent = frame
 
 -- Mały napis u góry
 local topLabel = Instance.new("TextLabel")
@@ -41,23 +36,27 @@ topLabel.Size = UDim2.new(1, 0, 0, 15)
 topLabel.Position = UDim2.new(0, 0, 0, 5)
 topLabel.BackgroundTransparency = 1
 topLabel.Text = "SeedCopy script - 1.0.0"
-topLabel.TextColor3 = Color3.new(1, 1, 1)
 topLabel.Font = Enum.Font.GothamSemibold
-topLabel.TextSize = 14
-topLabel.Parent = button
-topLabel.ZIndex = 2
+topLabel.TextSize = 13
+topLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+topLabel.Parent = frame
 
--- Napis Copy na środku
-local mainLabel = Instance.new("TextLabel")
-mainLabel.Size = UDim2.new(1, 0, 0, 30)
-mainLabel.Position = UDim2.new(0, 0, 0, 15)
-mainLabel.BackgroundTransparency = 1
-mainLabel.Text = "Copy"
-mainLabel.TextColor3 = Color3.new(1, 1, 1)
-mainLabel.Font = Enum.Font.GothamBold
-mainLabel.TextSize = 24
-mainLabel.Parent = button
-mainLabel.ZIndex = 2
+-- Główny przycisk
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, -40, 0, 40)
+button.Position = UDim2.new(0, 20, 0, 25)
+button.BackgroundColor3 = Color3.fromRGB(255, 165, 0) -- Pomarańczowy
+button.AutoButtonColor = false
+button.Text = "Copy"
+button.Font = Enum.Font.GothamBold
+button.TextSize = 20
+button.TextColor3 = Color3.fromRGB(30, 30, 30)
+button.Parent = frame
+button.Name = "CopyButton"
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 12)
+buttonCorner.Parent = button
 
 -- Napis na dole
 local bottomLabel = Instance.new("TextLabel")
@@ -65,70 +64,77 @@ bottomLabel.Size = UDim2.new(1, 0, 0, 15)
 bottomLabel.Position = UDim2.new(0, 0, 1, -20)
 bottomLabel.BackgroundTransparency = 1
 bottomLabel.Text = "Made by KingGaG"
-bottomLabel.TextColor3 = Color3.new(1, 1, 1)
-bottomLabel.Font = Enum.Font.Gotham
-bottomLabel.TextSize = 12
-bottomLabel.Parent = button
-bottomLabel.ZIndex = 2
+bottomLabel.Font = Enum.Font.GothamMedium
+bottomLabel.TextSize = 13
+bottomLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+bottomLabel.Parent = frame
 
--- Animacja pulsowania
-local tweenInfo = TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
-local tween1 = TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(255, 70, 150)})
-tween1:Play()
+-- Animacja hover
+local TweenService = game:GetService("TweenService")
 
--- Drag variables
-local dragging = false
+local hoverInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local tweenHover = TweenService:Create(button, hoverInfo, {BackgroundColor3 = Color3.fromRGB(255, 195, 50)})
+local tweenUnhover = TweenService:Create(button, hoverInfo, {BackgroundColor3 = Color3.fromRGB(255, 165, 0)})
+
+button.MouseEnter:Connect(function()
+    tweenHover:Play()
+end)
+button.MouseLeave:Connect(function()
+    tweenUnhover:Play()
+end)
+
+-- Animacja kliknięcia (skala)
+button.MouseButton1Down:Connect(function()
+    local clickDownTween = TweenService:Create(button, TweenInfo.new(0.1), {Size = UDim2.new(1, -44, 0, 36), Position = UDim2.new(0, 22, 0, 27)})
+    clickDownTween:Play()
+end)
+button.MouseButton1Up:Connect(function()
+    local clickUpTween = TweenService:Create(button, TweenInfo.new(0.1), {Size = UDim2.new(1, -40, 0, 40), Position = UDim2.new(0, 20, 0, 25)})
+    clickUpTween:Play()
+end)
+
+-- Kliknięcie przycisku
+button.MouseButton1Click:Connect(function()
+    button.Text = "Copied!"
+    Spawner.SpawnSeed("Candy Blossom")
+    wait(1.5)
+    button.Text = "Copy"
+end)
+
+-- Możliwość przesuwania GUI (dragging)
+local dragging
 local dragInput
 local dragStart
 local startPos
-local moved = false
 
-button.InputBegan:Connect(function(input)
+local function update(input)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                              startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+frame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
-        startPos = button.Position
-        moved = false
+        startPos = frame.Position
 
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
-                -- Jeśli przesunięto więcej niż 5px to traktuj jako drag a nie kliknięcie
-                if not moved then
-                    -- Kliknięcie (spawn seed)
-                    local clickTween = TweenService:Create(button, TweenInfo.new(0.15), {Size = UDim2.new(0, 140, 0, 55)})
-                    local releaseTween = TweenService:Create(button, TweenInfo.new(0.15), {Size = UDim2.new(0, 160, 0, 60)})
-
-                    clickTween:Play()
-                    clickTween.Completed:Wait()
-                    releaseTween:Play()
-
-                    pcall(function()
-                        Spawner.SpawnSeed("Candy Blossom")
-                    end)
-                end
             end
         end)
     end
 end)
 
-button.InputChanged:Connect(function(input)
+frame.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement then
         dragInput = input
     end
 end)
 
-UserInputService.InputChanged:Connect(function(input)
-    if dragging and input == dragInput then
-        local delta = input.Position - dragStart
-        if delta.Magnitude > 5 then
-            moved = true
-        end
-        button.Position = UDim2.new(
-            startPos.X.Scale,
-            startPos.X.Offset + delta.X,
-            startPos.Y.Scale,
-            startPos.Y.Offset + delta.Y
-        )
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
     end
 end)
