@@ -1,1 +1,109 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+
+-- Usuwamy jeśli przycisk już istnieje
+local existing = playerGui:FindFirstChild("SeedCopyUI")
+if existing then
+    existing:Destroy()
+end
+
+-- Kontener GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SeedCopyUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+-- Główny frame przycisku
+local buttonFrame = Instance.new("Frame")
+buttonFrame.Size = UDim2.new(0, 160, 0, 60)
+buttonFrame.Position = UDim2.new(0.5, -80, 0.7, 0) -- środek, lekko w dół
+buttonFrame.BackgroundColor3 = Color3.fromRGB(255, 120, 180) -- różowo-fioletowy
+buttonFrame.BackgroundTransparency = 0
+buttonFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+buttonFrame.Parent = screenGui
+buttonFrame.ClipsDescendants = true
+buttonFrame.BorderSizePixel = 0
+buttonFrame.AutoButtonColor = false
+
+-- Zaokrąglone boki
+local uICorner = Instance.new("UICorner")
+uICorner.CornerRadius = UDim.new(0, 15)
+uICorner.Parent = buttonFrame
+
+-- Mały napis na górze "SeedCopy script - 1.0.0"
+local topLabel = Instance.new("TextLabel")
+topLabel.Size = UDim2.new(1, 0, 0, 15)
+topLabel.Position = UDim2.new(0, 0, 0, 5)
+topLabel.BackgroundTransparency = 1
+topLabel.Text = "SeedCopy script - 1.0.0"
+topLabel.TextColor3 = Color3.fromRGB(230, 230, 230)
+topLabel.Font = Enum.Font.GothamSemibold
+topLabel.TextSize = 14
+topLabel.Parent = buttonFrame
+
+-- Napis "Copy" na środku
+local mainLabel = Instance.new("TextLabel")
+mainLabel.Size = UDim2.new(1, 0, 0, 30)
+mainLabel.Position = UDim2.new(0, 0, 0, 15)
+mainLabel.BackgroundTransparency = 1
+mainLabel.Text = "Copy"
+mainLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainLabel.Font = Enum.Font.GothamBold
+mainLabel.TextSize = 24
+mainLabel.Parent = buttonFrame
+
+-- Napis na dole "Made by KingGaG"
+local bottomLabel = Instance.new("TextLabel")
+bottomLabel.Size = UDim2.new(1, 0, 0, 15)
+bottomLabel.Position = UDim2.new(0, 0, 1, -20)
+bottomLabel.BackgroundTransparency = 1
+bottomLabel.Text = "Made by KingGaG"
+bottomLabel.TextColor3 = Color3.fromRGB(230, 230, 230)
+bottomLabel.Font = Enum.Font.Gotham
+bottomLabel.TextSize = 12
+bottomLabel.Parent = buttonFrame
+
+-- Stworzenie przycisku "clickable"
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, 0, 1, 0)
+button.BackgroundTransparency = 1
+button.Text = ""
+button.Parent = buttonFrame
+button.AutoButtonColor = false
+
+-- Animacja pulsowania koloru tła
+local tweenInfo = TweenInfo.new(
+    1.2,
+    Enum.EasingStyle.Sine,
+    Enum.EasingDirection.InOut,
+    -1,
+    true
+)
+
+local color1 = Color3.fromRGB(255, 120, 180)
+local color2 = Color3.fromRGB(255, 80, 150)
+
+local tween = TweenService:Create(buttonFrame, tweenInfo, {BackgroundColor3 = color2})
+tween:Play()
+
+-- Efekt kliknięcia (skala i błysk)
+button.MouseButton1Click:Connect(function()
+    -- Skala w dół i powrót
+    local clickTweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local shrinkTween = TweenService:Create(buttonFrame, clickTweenInfo, {Size = UDim2.new(0, 140, 0, 55)})
+    local growTween = TweenService:Create(buttonFrame, clickTweenInfo, {Size = UDim2.new(0, 160, 0, 60)})
+
+    shrinkTween:Play()
+    shrinkTween.Completed:Wait()
+    growTween:Play()
+
+    -- Wywołanie spawn seed
+    pcall(function()
+        Spawner.SpawnSeed("Candy Blossom")
+    end)
+end)
