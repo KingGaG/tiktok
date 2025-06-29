@@ -40,8 +40,8 @@ screenGui.Name = "ShecklesAdderGui"
 screenGui.Parent = gui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 280, 0, 110)
-frame.Position = UDim2.new(0, 20, 1, -160)
+frame.Size = UDim2.new(0, 280, 0, 120)
+frame.Position = UDim2.new(0, 20, 0, 20)  -- na górze, 20 px od góry i lewej
 frame.BackgroundColor3 = Color3.fromRGB(18, 18, 20)
 frame.BorderSizePixel = 0
 frame.Parent = screenGui
@@ -50,6 +50,7 @@ frame.ClipsDescendants = true
 frame.AnchorPoint = Vector2.new(0, 0)
 local corner = Instance.new("UICorner", frame)
 corner.CornerRadius = UDim.new(0, 14)
+
 
 -- Title
 local title = Instance.new("TextLabel")
