@@ -93,7 +93,7 @@ title.BackgroundTransparency = 1
 title.TextColor3 = Color3.fromRGB(210, 210, 210)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 22
-title.Text = "Add Shekels"
+title.Text = "Add Sheckles"
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = frame
 
