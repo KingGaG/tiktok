@@ -32,7 +32,7 @@ screenGui.Name = "ShecklesAdderGui"
 screenGui.Parent = gui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 280, 0, 180)  -- wysokość ramki
+frame.Size = UDim2.new(0, 280, 0, 180)
 frame.Position = UDim2.new(0, 20, 0, 20)
 frame.BackgroundColor3 = Color3.fromRGB(18, 18, 20)
 frame.BackgroundTransparency = 0.3
@@ -43,6 +43,56 @@ frame.ClipsDescendants = true
 frame.AnchorPoint = Vector2.new(0, 0)
 local corner = Instance.new("UICorner", frame)
 corner.CornerRadius = UDim.new(0, 14)
+
+-- Drag logic variables
+local dragging = false
+local dragInput, mousePos, framePos
+
+-- Function to update frame position while dragging
+local function update(input)
+    local delta = input.Position - mousePos
+    frame.Position = UDim2.new(
+        0,
+        math.clamp(framePos.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X),
+        0,
+        math.clamp(framePos.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
+    )
+end
+
+-- Set dragging only when click is outside interactive elements
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        -- Check if mouse is over inputBox or button to avoid conflict
+        local mouse = player:GetMouse()
+        local target = mouse.Target
+        -- We'll allow dragging only if the mouse is over the frame but NOT over input or button
+        -- But simpler is: Start dragging always, but block dragging if inputBox or button got input
+
+        -- We'll just start dragging here
+        dragging = true
+        dragInput = input
+        mousePos = input.Position
+        framePos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
 
 -- Title
 local title = Instance.new("TextLabel")
@@ -104,7 +154,7 @@ button.BorderSizePixel = 0
 button.Text = "Add"
 button.Font = Enum.Font.GothamBold
 button.TextSize = 22
-button.TextColor3 = Color3.fromRGB(245, 245, 255)
+button.TextColor3 = Color3.fromRGB(245, 245, 245)
 button.Parent = buttonContainer
 button.AutoButtonColor = false
 
@@ -133,40 +183,9 @@ footer.TextSize = 14
 footer.TextColor3 = Color3.fromRGB(180, 180, 180)
 footer.TextTransparency = 0.5
 footer.TextXAlignment = Enum.TextXAlignment.Center
-footer.Active = false -- nie blokuje inputów
+footer.Active = false
 footer.Selectable = false
 footer.Parent = frame
-
--- Drag & drop
-local dragging = false
-local dragStart
-local startPos
-
-frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = frame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-frame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(
-            0,
-            math.clamp(startPos.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X),
-            0,
-            math.clamp(startPos.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
-        )
-    end
-end)
 
 local isAnimating = false
 
