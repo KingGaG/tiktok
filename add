@@ -1,0 +1,137 @@
+local player = game.Players.LocalPlayer
+local gui = player:WaitForChild("PlayerGui")
+
+local UserInputService = game:GetService("UserInputService")
+
+-- Znajdź oryginalny licznik sheckles
+local shecklesGui = gui:WaitForChild("Sheckles_UI", 10) -- czekaj do 10 sek
+if not shecklesGui then
+    warn("Nie znaleziono Sheckles_UI w PlayerGui!")
+    return
+end
+
+local label = shecklesGui:FindFirstChild("TextLabel")
+if not label then
+    warn("Nie znaleziono TextLabel w Sheckles_UI!")
+    return
+end
+
+local function getCurrencySymbol(text)
+    return text:match("[%s%p]*([^%d%s]+)%s*$") or ""
+end
+
+local function parseNumber(text)
+    local numStr = text:gsub("[^%d]", "") -- zostawia tylko cyfry
+    return tonumber(numStr) or 0
+end
+
+local currentAmount = parseNumber(label.Text)
+local currencySymbol = getCurrencySymbol(label.Text)
+local isAnimating = false
+
+local function updateLabel(amount)
+    local formatted = tostring(amount):reverse():gsub("(%d%d%d)", "%1,"):reverse()
+    if formatted:sub(1,1) == "," then
+        formatted = formatted:sub(2)
+    end
+    label.Text = formatted .. " " .. currencySymbol
+end
+
+-- Tworzymy nasze GUI z polem i przyciskiem
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ShecklesAdderGui"
+screenGui.Parent = gui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 220, 0, 100)
+frame.Position = UDim2.new(0, 20, 1, -140)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+frame.Active = true
+
+local inputBox = Instance.new("TextBox")
+inputBox.Size = UDim2.new(1, -20, 0, 40)
+inputBox.Position = UDim2.new(0, 10, 0, 10)
+inputBox.PlaceholderText = "Wpisz kwotę do dodania"
+inputBox.ClearTextOnFocus = false
+inputBox.Text = ""
+inputBox.Font = Enum.Font.Gotham
+inputBox.TextSize = 20
+inputBox.TextColor3 = Color3.fromRGB(230,230,230)
+inputBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+inputBox.BorderSizePixel = 0
+inputBox.TextXAlignment = Enum.TextXAlignment.Left
+inputBox.Parent = frame
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, -20, 0, 40)
+button.Position = UDim2.new(0, 10, 0, 55)
+button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+button.BorderSizePixel = 0
+button.Text = "Dodaj Sheckles"
+button.Font = Enum.Font.GothamBold
+button.TextSize = 22
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Parent = frame
+button.AutoButtonColor = true
+
+-- Drag & drop ramki
+local dragging = false
+local dragStart
+local startPos
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(
+            0,
+            math.clamp(startPos.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X),
+            0,
+            math.clamp(startPos.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
+        )
+    end
+end)
+
+local function animateAdd(amountToAdd)
+    if isAnimating then return end
+    isAnimating = true
+
+    -- Odśwież aktualną kwotę na wypadek, gdyby zmieniła się z innych źródeł
+    currentAmount = parseNumber(label.Text)
+
+    local targetAmount = currentAmount + amountToAdd
+    local increment = math.max(1, math.floor(amountToAdd / 50))
+
+    while currentAmount < targetAmount do
+        currentAmount = math.min(currentAmount + increment, targetAmount)
+        updateLabel(currentAmount)
+        wait(0.02)
+    end
+
+    isAnimating = false
+end
+
+button.MouseButton1Click:Connect(function()
+    local text = inputBox.Text:gsub("%s+", "")
+    local num = tonumber(text)
+    if num and num > 0 then
+        animateAdd(num)
+    else
+        print("Wpisz poprawną liczbę większą od 0.")
+    end
+end)
