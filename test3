@@ -1,16 +1,14 @@
 -- PetCopier v1.0 by KingGaG
 
--- Usunięcie poprzedniego UI jeśli istnieje
 pcall(function()
     if game.CoreGui:FindFirstChild("PetCopierUI") then
         game.CoreGui.PetCopierUI:Destroy()
     end
 end)
 
--- Załaduj Spawner
 local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
 
--- Tworzenie UI
+local UserInputService = game:GetService("UserInputService")
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "PetCopierUI"
 ScreenGui.ResetOnSpawn = false
@@ -21,14 +19,11 @@ Frame.Position = UDim2.new(0.5, -150, 0.5, -90)
 Frame.BackgroundTransparency = 0.2
 Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Frame.BorderSizePixel = 0
-Frame.Active = true
-Frame.Draggable = true
 Frame.Parent = ScreenGui
 
 local UICorner = Instance.new("UICorner", Frame)
 UICorner.CornerRadius = UDim.new(0, 16)
 
--- Gradient dla tła
 local UIGradient = Instance.new("UIGradient", Frame)
 UIGradient.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 100)),
@@ -44,6 +39,7 @@ Title.BackgroundTransparency = 1
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 24
+Title.Name = "DragHandle"
 
 -- Przycisk
 local Button = Instance.new("TextButton", Frame)
@@ -59,7 +55,6 @@ Button.AutoButtonColor = false
 local ButtonCorner = Instance.new("UICorner", Button)
 ButtonCorner.CornerRadius = UDim.new(0, 12)
 
--- Animacja hover
 Button.MouseEnter:Connect(function()
     Button:TweenSize(UDim2.new(0, 210, 0, 55), "Out", "Quad", 0.15, true)
 end)
@@ -67,17 +62,13 @@ Button.MouseLeave:Connect(function()
     Button:TweenSize(UDim2.new(0, 200, 0, 50), "Out", "Quad", 0.15, true)
 end)
 
--- Funkcja kliknięcia
 Button.MouseButton1Click:Connect(function()
     Spawner.SpawnPet("Dragonfly", 10, 5)
-
     Button.Text = "Copied!"
-    Button.BackgroundColor3 = Color3.fromRGB(46, 204, 113) -- zielony
-
+    Button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
     wait(1.2)
-
     Button.Text = "Copy"
-    Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180) -- niebieski
+    Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
 end)
 
 -- Stopka
@@ -91,3 +82,29 @@ Footer.Font = Enum.Font.Gotham
 Footer.TextSize = 14
 Footer.TextTransparency = 0.2
 Footer.TextYAlignment = Enum.TextYAlignment.Center
+
+-- ✅ Prawdziwe działające przeciąganie
+local dragging = false
+local dragStart, startPos
+
+Title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = Frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
