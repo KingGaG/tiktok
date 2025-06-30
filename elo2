@@ -1,0 +1,48 @@
+--[[
+Grow a Garden – Fake Fruit Steal Visual (troll)
+Autor: ChatGPT
+Przeznaczenie: uruchom w Delta Executor
+]]
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+-- Funkcja "kradnąca" owoc wizualnie
+local function fakeStealFruit(fruit)
+    if not fruit then return end
+
+    -- Tworzymy kopię owocu jako wizualny efekt "przejęcia"
+    local fakeFruit = fruit:Clone()
+    fakeFruit.Parent = player.Character or workspace
+    fakeFruit.Anchored = true
+    fakeFruit.CanCollide = false
+
+    -- Ukrywamy oryginalny owoc na krótko (tylko klientowi)
+    fruit.Transparency = 1
+    fruit.CanCollide = false
+
+    -- Animacja - przesuwamy fałszywy owoc do postaci gracza
+    local startPos = fakeFruit.Position
+    local endPos = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position or player.Character.PrimaryPart.Position
+
+    local tweenService = game:GetService("TweenService")
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tween = tweenService:Create(fakeFruit, tweenInfo, {Position = endPos + Vector3.new(0, 2, 0), Transparency = 1})
+    tween:Play()
+
+    tween.Completed:Connect(function()
+        fakeFruit:Destroy()
+        -- Przywróć oryginalny owoc widoczny
+        fruit.Transparency = 0
+        fruit.CanCollide = true
+    end)
+end
+
+-- Nasłuchiwanie kliknięcia na owoc w grze
+mouse.Button1Down:Connect(function()
+    local target = mouse.Target
+    if target and target.Name == "Fruit" then -- zmień "Fruit" na rzeczywistą nazwę owocu w grze
+        fakeStealFruit(target)
+    end
+end)
