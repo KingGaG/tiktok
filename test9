@@ -17,7 +17,7 @@ end)
 local gui = Instance.new("ScreenGui")
 gui.Name = "FruitCopyUI"
 gui.ResetOnSpawn = false
-gui.Parent = game:GetService("CoreGui")
+gui.Parent = game:GetService("ScreenGui")
 
 local Frame = Instance.new("Frame")
 Frame.Size = UDim2.new(0, 250, 0, 140) -- MNIEJSZE UI
