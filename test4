@@ -40,28 +40,23 @@ end
 local function cloneFruit()
 	local character = player.Character
 	if not character then return end
-	
-	local tool = character:FindFirstChildOfClass("Tool")
+
+	local tool = character:FindFirstChildOfClass("Tool") or player.Backpack:FindFirstChildOfClass("Tool")
 	if not tool then
-		warn("Nie trzymasz nic w ręce.")
+		warn("Nie trzymasz nic w ręce ani nie masz owocu w ekwipunku.")
 		return
 	end
 
 	-- Skopiuj owoc
 	local clone = tool:Clone()
-	clone.Name = tool.Name -- zachowaj nazwę typu: "Carrot [0.23kg]"
+	clone.Name = tool.Name
 
-	-- Dodaj do lokalnego ekwipunku
-	clone.Parent = localInventory
+	-- Dodaj kopię do plecaka (Backpack)
+	clone.Parent = player.Backpack
 
-	-- Automatycznie załóż owoc do ręki
-	if character:FindFirstChildOfClass("Tool") then
-		character:FindFirstChildOfClass("Tool"):Destroy()
-	end
-	clone.Parent = character
-
-	print("✅ Skopiowano owoc:", clone.Name)
+	print("✅ Skopiowano owoc do ekwipunku:", clone.Name)
 end
+
 
 -- Obsługa przycisku
 button.MouseButton1Click:Connect(cloneFruit)
