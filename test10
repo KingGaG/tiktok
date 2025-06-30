@@ -17,15 +17,16 @@ end)
 local gui = Instance.new("ScreenGui")
 gui.Name = "FruitCopyUI"
 gui.ResetOnSpawn = false
-gui.Parent = game:GetService("ScreenGui")
+gui.Parent = game:GetService("CoreGui")
 
-local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 250, 0, 140) -- MNIEJSZE UI
+local frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 250, 0, 140)
 Frame.Position = UDim2.new(0.5, -125, 0.5, -70)
+frame.AnchorPoint = Vector2.new(0.5, 1)
 Frame.BackgroundTransparency = 0.2
 Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Frame.BorderSizePixel = 0
-Frame.Parent = ScreenGui
+frame.Parent = gui
 
 local UICorner = Instance.new("UICorner", frame)
 UICorner.CornerRadius = UDim.new(0, 16)
@@ -37,7 +38,6 @@ UIGradient.Color = ColorSequence.new{
 }
 UIGradient.Rotation = 45
 
--- Tytuł
 local Title = Instance.new("TextLabel", Frame)
 Title.Text = "PetCopier v1.0"
 Title.Size = UDim2.new(1, 0, 0, 30)
@@ -48,18 +48,18 @@ Title.TextSize = 20
 Title.Name = "DragHandle"
 
 -- Przycisk
-local Button = Instance.new("TextButton", Frame)
+local button = Instance.new("TextButton", frame)
 Button.Size = UDim2.new(0, 180, 0, 40)
 Button.Position = UDim2.new(0.5, -90, 0, 45)
-Button.Text = "Copy"
-Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
-Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Text = "Copy"
 Button.Font = Enum.Font.GothamBold
-Button.TextSize = 20
-Button.AutoButtonColor = false
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
+button.AutoButtonColor = false
 
 local buttonCorner = Instance.new("UICorner", button)
 buttonCorner.CornerRadius = UDim.new(0, 12)
+
 
 Button.MouseEnter:Connect(function()
     Button:TweenSize(UDim2.new(0, 190, 0, 45), "Out", "Quad", 0.15, true)
@@ -68,10 +68,12 @@ Button.MouseLeave:Connect(function()
     Button:TweenSize(UDim2.new(0, 180, 0, 40), "Out", "Quad", 0.15, true)
 end)
 
+
+-- Stopka
 local Footer = Instance.new("TextLabel", Frame)
 Footer.Text = "Made by KingGaG"
 Footer.Size = UDim2.new(1, 0, 0, 20)
-Footer.Position = UDim2.new(0, 0, 1, -20) -- MNIEJSZY ODSTĘP OD PRZYCISKU
+Footer.Position = UDim2.new(0, 0, 1, -20)
 Footer.BackgroundTransparency = 1
 Footer.TextColor3 = Color3.fromRGB(180, 180, 180)
 Footer.Font = Enum.Font.Gotham
@@ -79,6 +81,7 @@ Footer.TextSize = 13
 Footer.TextTransparency = 0.2
 Footer.TextYAlignment = Enum.TextYAlignment.Center
 
+-- Przesuwanie GUI przez tytuł
 local dragging = false
 local dragStart, startPos
 
@@ -142,8 +145,8 @@ button.MouseButton1Click:Connect(function()
 	cloneFruit()
 
 	button.Text = "Copied!"
-	Button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+	button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
 	wait(1.2)
-	button.Text = "Copy"
-	Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+	button.Text = "Copy Fruit 🍉"
+	button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
 end)
