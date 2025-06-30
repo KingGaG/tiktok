@@ -6,6 +6,9 @@ pcall(function()
     end
 end)
 
+if getgenv then
+    getgenv().Spawner = nil
+end
 local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
 local UserInputService = game:GetService("UserInputService")
 
