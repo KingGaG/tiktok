@@ -14,7 +14,7 @@ ScreenGui.Name = "PetCopierUI"
 ScreenGui.ResetOnSpawn = false
 
 local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 250, 0, 145) -- zwiększona wysokość
+Frame.Size = UDim2.new(0, 250, 0, 135)
 Frame.Position = UDim2.new(0.5, -125, 0.5, -70)
 Frame.BackgroundTransparency = 0.2
 Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -75,7 +75,7 @@ end)
 local Footer = Instance.new("TextLabel", Frame)
 Footer.Text = "Made by KingGaG"
 Footer.Size = UDim2.new(1, 0, 0, 20)
-Footer.Position = UDim2.new(0, 0, 0, 100) -- wyrównanie od dołu
+Footer.Position = UDim2.new(0, 0, 0, 100)
 Footer.BackgroundTransparency = 1
 Footer.TextColor3 = Color3.fromRGB(180, 180, 180)
 Footer.Font = Enum.Font.Gotham
