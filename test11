@@ -20,12 +20,12 @@ gui.ResetOnSpawn = false
 gui.Parent = game:GetService("CoreGui")
 
 local frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 250, 0, 140)
-Frame.Position = UDim2.new(0.5, -125, 0.5, -70)
+frame.Size = UDim2.new(0, 250, 0, 140)
+frame.Position = UDim2.new(0.5, -125, 0.5, -70)
 frame.AnchorPoint = Vector2.new(0.5, 1)
-Frame.BackgroundTransparency = 0.2
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame.BorderSizePixel = 0
+frame.BackgroundTransparency = 0.2
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
 frame.Parent = gui
 
 local UICorner = Instance.new("UICorner", frame)
@@ -38,21 +38,21 @@ UIGradient.Color = ColorSequence.new{
 }
 UIGradient.Rotation = 45
 
-local Title = Instance.new("TextLabel", Frame)
-Title.Text = "PetCopier v1.0"
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.BackgroundTransparency = 1
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20
-Title.Name = "DragHandle"
+local title = Instance.new("TextLabel", frame)
+title.Text = "PetCopier v1.0"
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.Name = "DragHandle"
 
 -- Przycisk
 local button = Instance.new("TextButton", frame)
-Button.Size = UDim2.new(0, 180, 0, 40)
-Button.Position = UDim2.new(0.5, -90, 0, 45)
+button.Size = UDim2.new(0, 180, 0, 40)
+button.Position = UDim2.new(0.5, -90, 0, 45)
 button.Text = "Copy"
-Button.Font = Enum.Font.GothamBold
+button.Font = Enum.Font.GothamBold
 button.TextColor3 = Color3.fromRGB(255, 255, 255)
 button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
 button.AutoButtonColor = false
@@ -70,7 +70,7 @@ end)
 
 
 -- Stopka
-local Footer = Instance.new("TextLabel", Frame)
+local Footer = Instance.new("TextLabel", frame)
 Footer.Text = "Made by KingGaG"
 Footer.Size = UDim2.new(1, 0, 0, 20)
 Footer.Position = UDim2.new(0, 0, 1, -20)
@@ -147,6 +147,6 @@ button.MouseButton1Click:Connect(function()
 	button.Text = "Copied!"
 	button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
 	wait(1.2)
-	button.Text = "Copy Fruit 🍉"
+	button.Text = "Copy"
 	button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
 end)
