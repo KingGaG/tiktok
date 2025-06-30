@@ -47,11 +47,6 @@ local function cloneFruit()
 		return
 	end
 
-	if not tool:FindFirstChild("FruitData") then
-		warn("To nie jest owoc.")
-		return
-	end
-
 	-- Skopiuj Toola
 	local clone = tool:Clone()
 	clone.Name = tool.Name
