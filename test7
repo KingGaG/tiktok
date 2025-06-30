@@ -1,24 +1,35 @@
 -- PetCopier v1.0 by KingGaG
 
+-- Usuwanie starego GUI
 pcall(function()
     if game.CoreGui:FindFirstChild("PetCopierUI") then
         game.CoreGui.PetCopierUI:Destroy()
     end
 end)
 
+-- Wymuszenie ponownego załadowania Spawner-a
 if getgenv then
     getgenv().Spawner = nil
 end
 
-local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-local UserInputService = game:GetService("UserInputService")
+-- Spróbuj załadować Spawner świeżo
+local success, Spawner = pcall(function()
+    return loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+end)
 
+if not success or not Spawner then
+    warn("Nie udało się załadować Spawner.lua")
+    return
+end
+
+-- Tworzenie GUI
+local UserInputService = game:GetService("UserInputService")
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "PetCopierUI"
 ScreenGui.ResetOnSpawn = false
 
 local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 250, 0, 140) -- MNIEJSZE UI
+Frame.Size = UDim2.new(0, 250, 0, 140)
 Frame.Position = UDim2.new(0.5, -125, 0.5, -70)
 Frame.BackgroundTransparency = 0.2
 Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -48,7 +59,7 @@ Title.Name = "DragHandle"
 -- Przycisk
 local Button = Instance.new("TextButton", Frame)
 Button.Size = UDim2.new(0, 180, 0, 40)
-Button.Position = UDim2.new(0.5, -90, 0, 45) -- MNIEJSZY ODSTĘP OD TYTUŁU
+Button.Position = UDim2.new(0.5, -90, 0, 45)
 Button.Text = "Copy"
 Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
 Button.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -66,20 +77,27 @@ Button.MouseLeave:Connect(function()
     Button:TweenSize(UDim2.new(0, 180, 0, 40), "Out", "Quad", 0.15, true)
 end)
 
+-- Kliknięcie przycisku
 Button.MouseButton1Click:Connect(function()
-    Spawner.SpawnPet("Dragonfly", 10, 5)
-    Button.Text = "Copied!"
-    Button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
-    wait(1.2)
-    Button.Text = "Copy"
-    Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+    -- Sprawdzenie, czy Spawner dalej istnieje i ma funkcję
+    if Spawner and typeof(Spawner.SpawnPet) == "function" then
+        Spawner.SpawnPet("Dragonfly", 10, 5)
+
+        Button.Text = "Copied!"
+        Button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+        wait(1.2)
+        Button.Text = "Copy"
+        Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+    else
+        warn("Spawner nie działa.")
+    end
 end)
 
 -- Stopka
 local Footer = Instance.new("TextLabel", Frame)
 Footer.Text = "Made by KingGaG"
 Footer.Size = UDim2.new(1, 0, 0, 20)
-Footer.Position = UDim2.new(0, 0, 1, -20) -- MNIEJSZY ODSTĘP OD PRZYCISKU
+Footer.Position = UDim2.new(0, 0, 1, -20)
 Footer.BackgroundTransparency = 1
 Footer.TextColor3 = Color3.fromRGB(180, 180, 180)
 Footer.Font = Enum.Font.Gotham
@@ -87,7 +105,7 @@ Footer.TextSize = 13
 Footer.TextTransparency = 0.2
 Footer.TextYAlignment = Enum.TextYAlignment.Center
 
--- Przeciąganie przez pasek tytułu
+-- Przeciąganie GUI
 local dragging = false
 local dragStart, startPos
 
