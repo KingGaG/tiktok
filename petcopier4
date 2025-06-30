@@ -1,4 +1,3 @@
--- PetCopier v1.0 by KingGaG
 
 pcall(function()
     if game.CoreGui:FindFirstChild("PetCopierUI") then
@@ -31,7 +30,6 @@ UIGradient.Color = ColorSequence.new{
 }
 UIGradient.Rotation = 45
 
--- Tytuł
 local Title = Instance.new("TextLabel", Frame)
 Title.Text = "PetCopier v1.0"
 Title.Size = UDim2.new(1, 0, 0, 30)
@@ -41,10 +39,9 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 20
 Title.Name = "DragHandle"
 
--- Przycisk
 local Button = Instance.new("TextButton", Frame)
 Button.Size = UDim2.new(0, 180, 0, 40)
-Button.Position = UDim2.new(0.5, -90, 0, 45) -- MNIEJSZY ODSTĘP OD TYTUŁU
+Button.Position = UDim2.new(0.5, -90, 0, 45)
 Button.Text = "Copy"
 Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
 Button.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -71,7 +68,6 @@ Button.MouseButton1Click:Connect(function()
     Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
 end)
 
--- Stopka
 local Footer = Instance.new("TextLabel", Frame)
 Footer.Text = "Made by KingGaG"
 Footer.Size = UDim2.new(1, 0, 0, 20)
@@ -83,7 +79,6 @@ Footer.TextSize = 13
 Footer.TextTransparency = 0.2
 Footer.TextYAlignment = Enum.TextYAlignment.Center
 
--- Przeciąganie przez pasek tytułu
 local dragging = false
 local dragStart, startPos
 
