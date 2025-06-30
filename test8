@@ -19,14 +19,13 @@ gui.Name = "FruitCopyUI"
 gui.ResetOnSpawn = false
 gui.Parent = game:GetService("CoreGui")
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 250, 0, 135)  -- Zwiększone, estetyczne
-frame.Position = UDim2.new(0.5, -125, 1, -150)
-frame.AnchorPoint = Vector2.new(0.5, 1)
-frame.BackgroundTransparency = 0.2
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.BorderSizePixel = 0
-frame.Parent = gui
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 250, 0, 140) -- MNIEJSZE UI
+Frame.Position = UDim2.new(0.5, -125, 0.5, -70)
+Frame.BackgroundTransparency = 0.2
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
 
 local UICorner = Instance.new("UICorner", frame)
 UICorner.CornerRadius = UDim.new(0, 16)
@@ -39,63 +38,47 @@ UIGradient.Color = ColorSequence.new{
 UIGradient.Rotation = 45
 
 -- Tytuł
-local title = Instance.new("TextLabel", frame)
-title.Text = "FruitCopier v1.0"
-title.Size = UDim2.new(1, 0, 0, 30)
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 24
-title.Name = "DragHandle"
+local Title = Instance.new("TextLabel", Frame)
+Title.Text = "PetCopier v1.0"
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 20
+Title.Name = "DragHandle"
 
 -- Przycisk
-local button = Instance.new("TextButton", frame)
-button.Size = UDim2.new(1, -20, 0, 40)
-button.Position = UDim2.new(0, 10, 0, 45)
-button.Text = "Copy"
-button.Font = Enum.Font.GothamBold
-button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
-button.AutoButtonColor = false
+local Button = Instance.new("TextButton", Frame)
+Button.Size = UDim2.new(0, 180, 0, 40)
+Button.Position = UDim2.new(0.5, -90, 0, 45)
+Button.Text = "Copy"
+Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Button.Font = Enum.Font.GothamBold
+Button.TextSize = 20
+Button.AutoButtonColor = false
 
 local buttonCorner = Instance.new("UICorner", button)
 buttonCorner.CornerRadius = UDim.new(0, 12)
 
-button.MouseEnter:Connect(function()
-	button:TweenSizeAndPosition(
-		UDim2.new(1, -10, 0, 45),
-		UDim2.new(0, 5, 0, 45),
-		"Out",
-		"Quad",
-		0.15,
-		true
-	)
+Button.MouseEnter:Connect(function()
+    Button:TweenSize(UDim2.new(0, 190, 0, 45), "Out", "Quad", 0.15, true)
+end)
+Button.MouseLeave:Connect(function()
+    Button:TweenSize(UDim2.new(0, 180, 0, 40), "Out", "Quad", 0.15, true)
 end)
 
-button.MouseLeave:Connect(function()
-	button:TweenSizeAndPosition(
-		UDim2.new(1, -20, 0, 40),
-		UDim2.new(0, 10, 0, 45),
-		"Out",
-		"Quad",
-		0.15,
-		true
-	)
-end)
+local Footer = Instance.new("TextLabel", Frame)
+Footer.Text = "Made by KingGaG"
+Footer.Size = UDim2.new(1, 0, 0, 20)
+Footer.Position = UDim2.new(0, 0, 1, -20) -- MNIEJSZY ODSTĘP OD PRZYCISKU
+Footer.BackgroundTransparency = 1
+Footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+Footer.Font = Enum.Font.Gotham
+Footer.TextSize = 13
+Footer.TextTransparency = 0.2
+Footer.TextYAlignment = Enum.TextYAlignment.Center
 
--- Stopka
-local footer = Instance.new("TextLabel", frame)
-footer.Text = "Made by KingGaG"
-footer.Size = UDim2.new(1, 0, 0, 20)
-footer.Position = UDim2.new(0, 0, 0, 100)
-footer.BackgroundTransparency = 1
-footer.TextColor3 = Color3.fromRGB(180, 180, 180)
-footer.Font = Enum.Font.Gotham
-footer.TextSize = 13
-footer.TextTransparency = 0.2
-footer.TextYAlignment = Enum.TextYAlignment.Center
-
--- Przesuwanie GUI przez tytuł
 local dragging = false
 local dragStart, startPos
 
@@ -159,8 +142,8 @@ button.MouseButton1Click:Connect(function()
 	cloneFruit()
 
 	button.Text = "Copied!"
-	button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+	Button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
 	wait(1.2)
-	button.Text = "Copy Fruit 🍉"
-	button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
+	button.Text = "Copy"
+	Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
 end)
