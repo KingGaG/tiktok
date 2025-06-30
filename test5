@@ -1,0 +1,152 @@
+-- Grow a Garden – Visual Fruit Copier UI [Client-side only]
+-- Autor: ChatGPT x KingGaG (c) 2025
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+-- Usuwanie starego GUI jeśli istnieje
+pcall(function()
+	if game.CoreGui:FindFirstChild("FruitCopyUI") then
+		game.CoreGui.FruitCopyUI:Destroy()
+	end
+end)
+
+-- Tworzenie GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "FruitCopyUI"
+gui.ResetOnSpawn = false
+gui.Parent = game:GetService("CoreGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 250, 0, 135)  -- Zwiększone, estetyczne
+frame.Position = UDim2.new(0.5, -125, 1, -150)
+frame.AnchorPoint = Vector2.new(0.5, 1)
+frame.BackgroundTransparency = 0.2
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local UICorner = Instance.new("UICorner", frame)
+UICorner.CornerRadius = UDim.new(0, 16)
+
+local UIGradient = Instance.new("UIGradient", frame)
+UIGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 100)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 30, 30))
+}
+UIGradient.Rotation = 45
+
+-- Tytuł
+local title = Instance.new("TextLabel", frame)
+title.Text = "FruitCopier v1.0"
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.Name = "DragHandle"
+
+-- Przycisk
+local button = Instance.new("TextButton", frame)
+button.Size = UDim2.new(1, -20, 0, 40)
+button.Position = UDim2.new(0, 10, 0, 45)
+button.Text = "Copy Fruit 🍉"
+button.Font = Enum.Font.GothamBold
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
+button.AutoButtonColor = false
+
+local buttonCorner = Instance.new("UICorner", button)
+buttonCorner.CornerRadius = UDim.new(0, 12)
+
+-- Animacja hover przycisku
+button.MouseEnter:Connect(function()
+	button:TweenSize(UDim2.new(1, -10, 0, 45), "Out", "Quad", 0.15, true)
+end)
+button.MouseLeave:Connect(function()
+	button:TweenSize(UDim2.new(1, -20, 0, 40), "Out", "Quad", 0.15, true)
+end)
+
+-- Stopka
+local footer = Instance.new("TextLabel", frame)
+footer.Text = "Made by KingGaG"
+footer.Size = UDim2.new(1, 0, 0, 20)
+footer.Position = UDim2.new(0, 0, 0, 100)
+footer.BackgroundTransparency = 1
+footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+footer.Font = Enum.Font.Gotham
+footer.TextSize = 13
+footer.TextTransparency = 0.2
+footer.TextYAlignment = Enum.TextYAlignment.Center
+
+-- Przesuwanie GUI przez tytuł
+local dragging = false
+local dragStart, startPos
+
+title.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+-- Lokalny ekwipunek (folder w ReplicatedStorage)
+local localInventory = ReplicatedStorage:FindFirstChild("LocalInventory")
+if not localInventory then
+	localInventory = Instance.new("Folder")
+	localInventory.Name = "LocalInventory"
+	localInventory.Parent = ReplicatedStorage
+end
+
+-- Funkcja kopiowania owocu
+local function cloneFruit()
+	local character = player.Character
+	if not character then return end
+
+	local tool = character:FindFirstChildOfClass("Tool") or player.Backpack:FindFirstChildOfClass("Tool")
+	if not tool then
+		warn("Nie trzymasz nic w ręce ani nie masz owocu w ekwipunku.")
+		return
+	end
+
+	-- Skopiuj owoc
+	local clone = tool:Clone()
+	clone.Name = tool.Name
+
+	-- Dodaj do plecaka
+	clone.Parent = player.Backpack
+
+	print("✅ Skopiowano owoc do ekwipunku:", clone.Name)
+end
+
+-- Obsługa kliknięcia z animacją tekstu
+button.MouseButton1Click:Connect(function()
+	cloneFruit()
+
+	button.Text = "Copied!"
+	button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+	wait(1.2)
+	button.Text = "Copy Fruit 🍉"
+	button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
+end)
