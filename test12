@@ -70,16 +70,16 @@ end)
 
 
 -- Stopka
-local Footer = Instance.new("TextLabel", frame)
-Footer.Text = "Made by KingGaG"
-Footer.Size = UDim2.new(1, 0, 0, 20)
-Footer.Position = UDim2.new(0, 0, 1, -20)
-Footer.BackgroundTransparency = 1
-Footer.TextColor3 = Color3.fromRGB(180, 180, 180)
-Footer.Font = Enum.Font.Gotham
-Footer.TextSize = 13
-Footer.TextTransparency = 0.2
-Footer.TextYAlignment = Enum.TextYAlignment.Center
+local footer = Instance.new("TextLabel", frame)
+footer.Text = "Made by KingGaG"
+footer.Size = UDim2.new(1, 0, 0, 20)
+footer.Position = UDim2.new(0, 0, 1, -20)
+footer.BackgroundTransparency = 1
+footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+footer.Font = Enum.Font.Gotham
+footer.TextSize = 13
+footer.TextTransparency = 0.2
+footer.TextYAlignment = Enum.TextYAlignment.Center
 
 -- Przesuwanie GUI przez tytuł
 local dragging = false
