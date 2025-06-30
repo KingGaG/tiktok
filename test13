@@ -1,0 +1,33 @@
+button.Size = UDim2.new(1, -20, 0, 40)
+button.Position = UDim2.new(0, 10, 0, 45)
+button.Text = "Copy"
+button.TextSize = 24
+button.Font = Enum.Font.GothamBold
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.BackgroundColor3 = Color3.fromRGB(85, 170, 85)
+button.AutoButtonColor = false
+
+local buttonCorner = Instance.new("UICorner", button)
+buttonCorner.CornerRadius = UDim.new(0, 12)
+
+button.MouseEnter:Connect(function()
+	button:TweenSizeAndPosition(
+		UDim2.new(1, -10, 0, 45),
+		UDim2.new(0, 5, 0, 45),
+		"Out",
+		"Quad",
+		0.15,
+		true
+	)
+end)
+
+button.MouseLeave:Connect(function()
+	button:TweenSizeAndPosition(
+		UDim2.new(1, -20, 0, 40),
+		UDim2.new(0, 10, 0, 45),
+		"Out",
+		"Quad",
+		0.15,
+		true
+	)
+end)
