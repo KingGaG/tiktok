@@ -1,0 +1,93 @@
+-- PetCopier v1.0 by KingGaG
+
+-- Usunięcie poprzedniego UI jeśli istnieje
+pcall(function()
+    if game.CoreGui:FindFirstChild("PetCopierUI") then
+        game.CoreGui.PetCopierUI:Destroy()
+    end
+end)
+
+-- Załaduj Spawner
+local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+
+-- Tworzenie UI
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "PetCopierUI"
+ScreenGui.ResetOnSpawn = false
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 300, 0, 180)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -90)
+Frame.BackgroundTransparency = 0.2
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+Frame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner", Frame)
+UICorner.CornerRadius = UDim.new(0, 16)
+
+-- Gradient dla tła
+local UIGradient = Instance.new("UIGradient", Frame)
+UIGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 100)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 30, 30))
+}
+UIGradient.Rotation = 45
+
+-- Tytuł
+local Title = Instance.new("TextLabel", Frame)
+Title.Text = "PetCopier v1.0"
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.BackgroundTransparency = 1
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 24
+
+-- Przycisk
+local Button = Instance.new("TextButton", Frame)
+Button.Size = UDim2.new(0, 200, 0, 50)
+Button.Position = UDim2.new(0.5, -100, 0.5, -25)
+Button.Text = "Copy"
+Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Button.Font = Enum.Font.GothamBold
+Button.TextSize = 22
+Button.AutoButtonColor = false
+
+local ButtonCorner = Instance.new("UICorner", Button)
+ButtonCorner.CornerRadius = UDim.new(0, 12)
+
+-- Animacja hover
+Button.MouseEnter:Connect(function()
+    Button:TweenSize(UDim2.new(0, 210, 0, 55), "Out", "Quad", 0.15, true)
+end)
+Button.MouseLeave:Connect(function()
+    Button:TweenSize(UDim2.new(0, 200, 0, 50), "Out", "Quad", 0.15, true)
+end)
+
+-- Funkcja kliknięcia
+Button.MouseButton1Click:Connect(function()
+    Spawner.SpawnPet("Dragonfly", 10, 5)
+
+    Button.Text = "Copied!"
+    Button.BackgroundColor3 = Color3.fromRGB(46, 204, 113) -- zielony
+
+    wait(1.2)
+
+    Button.Text = "Copy"
+    Button.BackgroundColor3 = Color3.fromRGB(70, 130, 180) -- niebieski
+end)
+
+-- Stopka
+local Footer = Instance.new("TextLabel", Frame)
+Footer.Text = "Made by KingGaG"
+Footer.Size = UDim2.new(1, 0, 0, 25)
+Footer.Position = UDim2.new(0, 0, 1, -25)
+Footer.BackgroundTransparency = 1
+Footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+Footer.Font = Enum.Font.Gotham
+Footer.TextSize = 14
+Footer.TextTransparency = 0.2
+Footer.TextYAlignment = Enum.TextYAlignment.Center
