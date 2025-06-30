@@ -43,18 +43,23 @@ local function cloneFruit()
 	
 	local tool = character:FindFirstChildOfClass("Tool")
 	if not tool then
-		warn("Nie trzymasz owocu w ręce.")
+		warn("Nie trzymasz nic w ręce.")
 		return
 	end
 
-	-- Skopiuj Toola
+	-- Skopiuj owoc
 	local clone = tool:Clone()
-	clone.Name = tool.Name
+	clone.Name = tool.Name -- zachowaj nazwę typu: "Carrot [0.23kg]"
 
 	-- Dodaj do lokalnego ekwipunku
 	clone.Parent = localInventory
 
-	-- Info
+	-- Automatycznie załóż owoc do ręki
+	if character:FindFirstChildOfClass("Tool") then
+		character:FindFirstChildOfClass("Tool"):Destroy()
+	end
+	clone.Parent = character
+
 	print("✅ Skopiowano owoc:", clone.Name)
 end
 
