@@ -63,7 +63,7 @@ Button.MouseLeave:Connect(function()
 end)
 
 Button.MouseButton1Click:Connect(function()
-    Spawner.SpawnPet("Dragonfly", 10, 5)
+    Spawner.SpawnPet("Dragonfly", 5, 10)
     Button.Text = "Copied!"
     Button.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
     wait(1.2)
